@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import SignInOut from "./signin-out";
+import HeaderBtn from "./HeaderBtn";
 
 export default function Header({ children }) {
   return (
@@ -12,16 +12,16 @@ export default function Header({ children }) {
           </Link>
           <ul className="text-lg font-semibold px-4 pt-2 list-disc">
             <li>
-              <Link href="/settings">Settings</Link>
+              <HeaderBtn href={"/settings"} label={"Settings"} />
             </li>
             <li className="py-2">
-              <Link href="/transactions/create">Create New Transaction</Link>
+              <HeaderBtn href={"/transactions/create"} label={"Create New Transaction"} />
             </li>
             <li className="pb-2">
-              <Link href="/transactions/pending">Pending Transactions</Link>
+              <HeaderBtn href={"/transactions/pending"} label={"Pending Transactions"} />
             </li>
             <li className="pb-2">
-              <SignInOut />
+              <HeaderBtn signIn={true} href={"/api/auth/signin"} label={"Sign In"} />
             </li>
           </ul>
         </div>
