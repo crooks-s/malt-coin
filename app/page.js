@@ -11,7 +11,6 @@ import Footer from "@/components/footer";
 export default function Home() {
   const [blockNum, setBlockNum] = useState(0); // block number
   const selectedBlock = blockchainInstance.chain[blockNum]; // selected block using block number
-
   return (
     <>
       <Header />
