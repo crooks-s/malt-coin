@@ -14,6 +14,9 @@ const CardWrapper = ({
   timestamp,
   onClick
 }) => {
+
+  const formattedDate = new Date(timestamp).toLocaleString();
+
   return (
     <Card className="w-1/3 mx-2 overflow-x-auto flex flex-col justify-between pb-3 mt-4">
       <CardHeader className="text-center font-bold text-lg">{headerLabel}</CardHeader>
@@ -24,7 +27,7 @@ const CardWrapper = ({
       <CardContent>
         <span className="font-semibold">Nonce: </span>{nonce}</CardContent>
       <CardContent>
-        <span className="font-semibold">Timestamp: </span>{timestamp}</CardContent>
+        <span className="font-semibold">Timestamp: </span>{formattedDate}</CardContent>
       <button onClick={onClick} className="bg-slate-500 text-white p-2 rounded-md mx-auto">View Transactions</button>
     </Card>
   )

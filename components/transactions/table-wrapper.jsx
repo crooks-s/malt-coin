@@ -11,6 +11,9 @@ import {
 } from "@/components/ui/table";
 
 const TableWrapper = ({ transactions }) => {
+
+  const formattedDate = new Date().toLocaleString();
+
   return (
     <>
     <h1 className="text-2xl font-bold text-center py-5">List of Pending Transactions</h1>
@@ -48,7 +51,7 @@ const TableWrapper = ({ transactions }) => {
                 {transaction.amount}
               </TableCell>
               <TableCell className="w-2 text-center px-16" >
-                {transaction.timestamp}
+                {formattedDate}
               </TableCell>
             </TableRow>
           ))}

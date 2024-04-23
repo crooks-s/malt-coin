@@ -12,6 +12,9 @@ import {
 const TableWrapper = ({
   selectedBlock,
 }) => {
+
+  const formattedDate = new Date(selectedBlock.timestamp).toLocaleString();
+
   return (
     <Table>
       <TableHeader>
@@ -44,7 +47,7 @@ const TableWrapper = ({
               {transaction.toAddress}
             </TableCell>
             <TableCell className="w-2 text-center px-16" >{transaction.amount}</TableCell>
-            <TableCell className="w-2 text-center px-16">{transaction.timestamp}</TableCell>
+            <TableCell className="w-2 text-center px-16">{formattedDate}</TableCell>
             <TableCell >
               {selectedBlock.hasValidTransactions() ? "yes" : "no"}
             </TableCell>
