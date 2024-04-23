@@ -6,24 +6,40 @@ export default function Header({ children }) {
   return (
     <header>
       <nav>
-        <div className="nav-wrapper bg-slate-300 flex justify-between items-center py-2">
+        <div className="nav-wrapper bg-slate-300 flex flex-wrap justify-center items-center py-2 px-3">
           <Link href="/" className="px-4">
             <Image src="/logo.svg" alt="logo" width={200} height={200} />
           </Link>
-          <ul className="text-lg font-semibold px-4 pt-2 list-disc">
-            <li>
-              <HeaderBtn href={"/settings"} label={"Settings"} />
-            </li>
-            <li className="py-2">
-              <HeaderBtn href={"/transactions/create"} label={"Create New Transaction"} />
-            </li>
-            <li className="pb-2">
-              <HeaderBtn href={"/transactions/pending"} label={"Pending Transactions"} />
-            </li>
-            <li className="pb-2">
-              <HeaderBtn signIn={true} href={"/api/auth/signin"} label={"Sign In"} />
-            </li>
-          </ul>
+
+              <HeaderBtn 
+              href={"/settings"} 
+              label={"Settings"} />
+
+
+              <HeaderBtn
+                href={"/transactions/create"}
+                label={"Create New Transaction"}
+              />
+
+
+              <HeaderBtn
+                href={"/transactions/pending"}
+                label={"Pending Transactions"}
+              />
+
+
+              <HeaderBtn
+                signIn={true}
+                href={"/api/auth/signin"}
+                label={"Sign In with Google"}
+              />
+
+            <HeaderBtn
+                signIn={true}
+                href={"/login"}
+                label={"Login"}
+              />
+
         </div>
       </nav>
       {children}
