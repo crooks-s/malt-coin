@@ -6,6 +6,7 @@ const users = {
     email: "john@example.com",
     fullName: "John Doe",
     age: 30,
+    maltWallet: 100,
     isAdmin: false
   },
   user2: {
@@ -15,6 +16,7 @@ const users = {
     email: "jane@example.com",
     fullName: "Jane Smith",
     age: 25,
+    maltWallet: 20,
     isAdmin: true
   },
   user3: {
@@ -24,6 +26,7 @@ const users = {
     email: "alice@example.com",
     fullName: "Alice Wonderland",
     age: 28,
+    maltWallet: 50,
     isAdmin: false
   }
 };
