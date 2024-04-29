@@ -1,5 +1,5 @@
-const users = {
-  user1: {
+const users = [
+  {
     id: 1,
     username: "john_doe",
     password: "password",
@@ -7,9 +7,9 @@ const users = {
     fullName: "John Doe",
     age: 30,
     maltWallet: 100,
-    isAdmin: false
+    isAdmin: false,
   },
-  user2: {
+  {
     id: 2,
     username: "jane_smith",
     password: "password",
@@ -17,9 +17,9 @@ const users = {
     fullName: "Jane Smith",
     age: 25,
     maltWallet: 20,
-    isAdmin: true
+    isAdmin: true,
   },
-  user3: {
+  {
     id: 3,
     username: "alice_wonderland",
     password: "password",
@@ -27,8 +27,8 @@ const users = {
     fullName: "Alice Wonderland",
     age: 28,
     maltWallet: 50,
-    isAdmin: false
-  }
-};
+    isAdmin: false,
+  },
+];
 
 export default users;

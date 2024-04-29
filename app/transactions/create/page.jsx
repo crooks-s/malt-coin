@@ -5,7 +5,6 @@ import { Transaction } from "@/bc-instance/blockchain";
 import { useLoginStore } from "@/store";
 
 const CreateTransaction = () => {
-  const isLoggedIn = useLoginStore((state) => state.isLoggedIn);
 
   const handleSubmit = (e) => {
     e.preventDefault();

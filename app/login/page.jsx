@@ -3,18 +3,17 @@
 import users from "@/bc-instance/users/data";
 import { useState } from "react";
 import { useLoginStore } from "@/store";
+import { useRouter } from 'next/navigation';
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState([]);
-  // console.log(useLoginStore((state) => state.isLoggedIn));
+  const router = useRouter();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const user = Object.values(users).find(
-      (user) => user.username === username
-    );
+    const user = users.find((user) => user.username === username);
 
     if (!user || user.password !== password) {
       setErrors(["Invalid username or password"]);
@@ -24,6 +23,7 @@ const LoginPage = () => {
     if (username === user.username && password === user.password) {
       useLoginStore.setState({ isLoggedIn: true });
       alert("Login successful");
+      router.push("/");
     }
   };
 
