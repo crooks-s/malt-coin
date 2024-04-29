@@ -26,6 +26,10 @@ export default function Header({ children }) {
             label={"Pending Transactions"}
           />
           <HeaderBtn href={"/settings"} label={"Settings"} />
+          <HeaderBtn
+            href={"/account"}
+            label={"Account Info"}
+          />
 
           {!useLoginStore((state) => state.isLoggedIn) ? (
             <>

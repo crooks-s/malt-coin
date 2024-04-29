@@ -22,6 +22,7 @@ const LoginPage = () => {
 
     if (username === user.username && password === user.password) {
       useLoginStore.setState({ isLoggedIn: true });
+      useLoginStore.setState({ user });
       alert("Login successful");
       router.push("/");
     }
