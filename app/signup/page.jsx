@@ -2,7 +2,7 @@ import React from 'react'
 
 const SignUp = () => {
   return (
-    <form></form>
+    <form>sign up</form>
   )
 }
 

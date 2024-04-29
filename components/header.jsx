@@ -7,6 +7,7 @@ import { useLoginStore } from "@/store";
 import HeaderLogin from "./HeaderBtns/HeaderLogin";
 import HeaderGoogleLogin from "./HeaderBtns/HeaderGoogleLogin";
 import HeaderLogout from "./HeaderBtns/HeaderLogout";
+import HeaderSignUp from "./HeaderBtns/HeaderSignUp";
 
 export default function Header({ children }) {
   return (
@@ -30,6 +31,7 @@ export default function Header({ children }) {
             <>
               <HeaderGoogleLogin />
               <HeaderLogin href={"/login"} label={"Login"} />
+              <HeaderSignUp href={"/signup"} />
             </>
           ) : (
             <HeaderLogout />
