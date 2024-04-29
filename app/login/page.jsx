@@ -1,6 +1,6 @@
 "use client";
 
-import users from "@/users/data";
+import users from "@/bc-instance/users/data";
 import { useState } from "react";
 import { useLoginStore } from "@/store";
 
@@ -23,7 +23,6 @@ const LoginPage = () => {
 
     if (username === user.username && password === user.password) {
       useLoginStore.setState({ isLoggedIn: true });
-      // console.log(useLoginStore((state) => state.isLoggedIn));
       alert("Login successful");
     }
   };
