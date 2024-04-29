@@ -5,6 +5,7 @@ import { Transaction } from "@/bc-instance/blockchain";
 import { useLoginStore } from "@/store";
 
 const CreateTransaction = () => {
+  const user = useLoginStore((state) => state.user);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -42,23 +43,27 @@ const CreateTransaction = () => {
           <h1 className="text-2xl font-bold mt-8 ml-10">
             Create a New Transaction
           </h1>
+          <h2 className="text-lg ml-10 pt-10 font-semibold">
+            Current account balance:
+            <span className="text-xl">  {user.maltWallet}</span>
+          </h2>
           <form
             onSubmit={handleSubmit}
             className="flex flex-wrap items-center w-full"
           >
             <div className="px-10 py-10 w-full">
-              <span className="pr-5 font-semibold">Sender Address</span>
+              <span className="pr-5 font-semibold">Your Wallet Address</span>
               <input
-                className="border border-gray-300 rounded-md p-2"
+                className="border border-gray-300 rounded-md p-2 block w-full overflow-auto break-words"
+                disabled={true}
                 type="text"
-                placeholder="Sender Address"
-                defaultValue={walletKeys[0].publicKey} // temp using first key
+                defaultValue={user.publicKey}
               />
             </div>
             <div className="px-10 w-full">
               <span className="pr-5 font-semibold">Recipient Address</span>
               <input
-                className="border border-gray-300 rounded-md p-2"
+                className="border border-gray-300 rounded-md p-2 block w-full overflow-auto break-words"
                 type="text"
                 placeholder="Recipient Address"
               />
@@ -69,6 +74,7 @@ const CreateTransaction = () => {
                 className="border border-gray-300 rounded-md p-2"
                 type="number"
                 min="0"
+                max={user.maltWallet}
                 placeholder="Amount"
               />
             </div>

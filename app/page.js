@@ -34,6 +34,8 @@ export default function Home() {
           />
         ))}
       </div>
+
+      {/* List of transactions */}
       <h1 className="px-4 text-xl font-semibold pt-10 pb-5 text-center">
         List of Transactions in Block #{blockNum}
       </h1>

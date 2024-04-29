@@ -22,6 +22,10 @@ const AccountPage = () => {
             </p>
             <h2 className="font-semibold">Account balance</h2>
             <p>{user.maltWallet} maltcoins</p>
+            <h2 className="font-semibold overflow-x-auto">
+              Wallet Address
+            </h2>
+            <p className="max-w-xs overflow-hidden break-words" >{user.publicKey}</p>
           </div>
         </>
       ) : (

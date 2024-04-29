@@ -2,13 +2,7 @@ const EC = require("elliptic").ec;
 const ec = new EC("secp256k1"); // secp256k1 is the algorithm used in bitcoin
 
 const johnsKey = ec.genKeyPair();
-// publicKey: key.getPublic("hex")
-// privateKey: key.getPrivate("hex")
-
 const janesKey = ec.genKeyPair();
-// publicKey: key.getPublic("hex")
-// privateKey: key.getPrivate("hex")
-
 const alicesKey = ec.genKeyPair();
 // publicKey: key.getPublic("hex")
 // privateKey: key.getPrivate("hex")
