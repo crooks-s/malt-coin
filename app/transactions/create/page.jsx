@@ -3,9 +3,11 @@
 import { blockchainInstance, walletKeys } from "@/bc-instance/data";
 import { Transaction } from "@/bc-instance/blockchain";
 import { useLoginStore } from "@/store";
+import { useRouter } from "next/navigation";
 
 const CreateTransaction = () => {
   const user = useLoginStore((state) => state.user);
+  const router = useRouter();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -37,11 +39,13 @@ const CreateTransaction = () => {
       amount,
       ms // temp date for testing
     );
-    tx.signTransaction(walletKeys[0].keyObj); // temp using first key
+    tx.signTransaction(user.keyObj); // temp using first key
     blockchainInstance.addTransaction(tx);
     e.target[1].value = "";
     e.target[2].value = "";
+    user.maltBalance -= amount;
     alert("Transaction created");
+    router.push('/transactions/pending');
   };
 
   return (
