@@ -1,3 +1,18 @@
+const EC = require("elliptic").ec;
+const ec = new EC("secp256k1"); // secp256k1 is the algorithm used in bitcoin
+
+const johnsKey = ec.genKeyPair();
+// publicKey: key.getPublic("hex")
+// privateKey: key.getPrivate("hex")
+
+const janesKey = ec.genKeyPair();
+// publicKey: key.getPublic("hex")
+// privateKey: key.getPrivate("hex")
+
+const alicesKey = ec.genKeyPair();
+// publicKey: key.getPublic("hex")
+// privateKey: key.getPrivate("hex")
+
 const users = [
   {
     id: 1,
@@ -8,6 +23,8 @@ const users = [
     lastName: "Doe",
     age: 30,
     maltWallet: 100,
+    publicKey: johnsKey.getPublic("hex"),
+    privateKey: johnsKey.getPrivate("hex"),
     isAdmin: false,
   },
   {
@@ -19,6 +36,8 @@ const users = [
     lastName: "Smith",
     age: 25,
     maltWallet: 20,
+    publicKey: janesKey.getPublic("hex"),
+    privateKey: janesKey.getPrivate("hex"),
     isAdmin: true,
   },
   {
@@ -30,6 +49,8 @@ const users = [
     lastName: "Wonderland",
     age: 28,
     maltWallet: 50,
+    publicKey: alicesKey.getPublic("hex"),
+    privateKey: alicesKey.getPrivate("hex"),
     isAdmin: false,
   },
 ];
