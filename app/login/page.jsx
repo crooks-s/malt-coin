@@ -2,24 +2,28 @@
 
 import users from "@/users/data";
 import { useState } from "react";
+import { useLoginStore } from "@/store";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState([]);
+  // console.log(useLoginStore((state) => state.isLoggedIn));
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const user = Object.values(users).find(
       (user) => user.username === username
     );
-    
+
     if (!user || user.password !== password) {
       setErrors(["Invalid username or password"]);
       return;
     }
 
     if (username === user.username && password === user.password) {
+      useLoginStore.setState({ isLoggedIn: true });
+      // console.log(useLoginStore((state) => state.isLoggedIn));
       alert("Login successful");
     }
   };

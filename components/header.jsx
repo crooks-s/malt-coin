@@ -1,6 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import HeaderBtn from "./HeaderBtn";
+import HeaderBtn from "./HeaderBtns/HeaderBtn";
+import { useLoginStore } from "@/store";
+import HeaderLogin from "./HeaderBtns/HeaderLogin";
+import HeaderGoogleLogin from "./HeaderBtns/HeaderGoogleLogin";
+import HeaderLogout from "./HeaderBtns/HeaderLogout";
 
 export default function Header({ children }) {
   return (
@@ -10,36 +16,24 @@ export default function Header({ children }) {
           <Link href="/" className="px-4">
             <Image src="/logo.svg" alt="logo" width={200} height={200} />
           </Link>
+          <HeaderBtn
+            href={"/transactions/create"}
+            label={"Create New Transaction"}
+          />
+          <HeaderBtn
+            href={"/transactions/pending"}
+            label={"Pending Transactions"}
+          />
+          <HeaderBtn href={"/settings"} label={"Settings"} />
 
-              <HeaderBtn 
-              href={"/settings"} 
-              label={"Settings"} />
-
-
-              <HeaderBtn
-                href={"/transactions/create"}
-                label={"Create New Transaction"}
-              />
-
-
-              <HeaderBtn
-                href={"/transactions/pending"}
-                label={"Pending Transactions"}
-              />
-
-
-              <HeaderBtn
-                signIn={true}
-                href={"/api/auth/signin"}
-                label={"Sign In with Google"}
-              />
-
-            <HeaderBtn
-                signIn={true}
-                href={"/login"}
-                label={"Login"}
-              />
-
+          {!useLoginStore((state) => state.isLoggedIn) ? (
+            <>
+              <HeaderGoogleLogin />
+              <HeaderLogin href={"/login"} label={"Login"} />
+            </>
+          ) : (
+            <HeaderLogout />
+          )}
         </div>
       </nav>
       {children}
