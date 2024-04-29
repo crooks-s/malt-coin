@@ -17,6 +17,14 @@ const CreateTransaction = () => {
       e.preventDefault();
       alert("Please fill in all fields");
       return;
+    } else if (amount > user.maltBalance) {
+      e.preventDefault();
+      alert("Insufficient balance");
+      return;
+    } else if (amount <= 0) {
+      e.preventDefault();
+      alert("Please enter a valid amount");
+      return;
     }
 
     // for testing purposes. this should be removed and changed to the current date
@@ -45,7 +53,7 @@ const CreateTransaction = () => {
           </h1>
           <h2 className="text-lg ml-10 pt-10 font-semibold">
             Current account balance:
-            <span className="text-xl">  {user.maltBalance}</span>
+            <span className="text-xl"> {user.maltBalance}</span>
           </h2>
           <form
             onSubmit={handleSubmit}
