@@ -21,7 +21,7 @@ const AccountPage = () => {
               {user.firstName} {user.lastName}
             </p>
             <h2 className="font-semibold">Account balance</h2>
-            <p>{user.maltWallet} maltcoins</p>
+            <p>{user.maltBalance} maltcoins</p>
             <h2 className="font-semibold overflow-x-auto">
               Wallet Address
             </h2>

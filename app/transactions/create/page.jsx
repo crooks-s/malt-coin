@@ -45,7 +45,7 @@ const CreateTransaction = () => {
           </h1>
           <h2 className="text-lg ml-10 pt-10 font-semibold">
             Current account balance:
-            <span className="text-xl">  {user.maltWallet}</span>
+            <span className="text-xl">  {user.maltBalance}</span>
           </h2>
           <form
             onSubmit={handleSubmit}
