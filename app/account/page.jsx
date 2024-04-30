@@ -1,10 +1,16 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLoginStore } from "@/store";
 import { blockchainInstance } from "@/bc-instance/data";
 
 const AccountPage = () => {
   const user = useLoginStore((state) => state.user);
+  const [balance, setBalance] = useState(0);
+  useEffect(() => {
+    if (user) {
+      setBalance(blockchainInstance.getBalanceOfAddress(user.publicKey));
+    }
+  }, [user]);
 
   return (
     <>
@@ -21,11 +27,11 @@ const AccountPage = () => {
               {user.firstName} {user.lastName}
             </p>
             <h2 className="font-semibold">Account balance</h2>
-            <p>{blockchainInstance.getBalanceOfAddress(user.publicKey)} maltcoins</p>
-            <h2 className="font-semibold overflow-x-auto">
-              Wallet Address
-            </h2>
-            <p className="max-w-xs overflow-hidden break-words" >{user.publicKey}</p>
+            <p>{balance} maltcoins</p>
+            <h2 className="font-semibold overflow-x-auto">Wallet Address</h2>
+            <p className="max-w-xs overflow-hidden break-words">
+              {user.publicKey}
+            </p>
           </div>
         </>
       ) : (

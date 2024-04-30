@@ -4,10 +4,27 @@ import { blockchainInstance, walletKeys } from "@/bc-instance/data";
 import { Transaction } from "@/bc-instance/blockchain";
 import { useLoginStore } from "@/store";
 import { useRouter } from "next/navigation";
+import users from "@/bc-instance/data";
+import { useEffect, useState } from "react";
+import RadioBtn from "@/components/transactions/radio-btns";
 
 const CreateTransaction = () => {
   const user = useLoginStore((state) => state.user);
   const router = useRouter();
+  const [otherUsers, setOtherUsers] = useState([]);
+  const [balance, setBalance] = useState(0);
+  const [selectedRecipient, setSelectedRecipient] = useState("");
+
+  const handleRecipientChange = (e) => {
+    setSelectedRecipient(e.target.value);
+  };
+
+  useEffect(() => {
+    if (user) {
+      setOtherUsers(users.filter((u) => u.username !== user.username)); // get other users
+      setBalance(blockchainInstance.getBalanceOfAddress(user.publicKey)); // get balance
+    }
+  }, [user]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -45,19 +62,19 @@ const CreateTransaction = () => {
     e.target[2].value = "";
     user.maltBalance -= amount;
     alert("Transaction created");
-    router.push('/transactions/pending');
+    router.push("/transactions/pending");
   };
 
   return (
     <>
-      {useLoginStore((state) => state.isLoggedIn) ? (
+      {useLoginStore((state) => state.isLoggedIn) && otherUsers.length > 0 ? (
         <>
           <h1 className="text-2xl font-bold mt-8 ml-10">
             Create a New Transaction
           </h1>
           <h2 className="text-lg ml-10 pt-10 font-semibold">
             Current account balance:
-            <span className="text-xl"> {user.maltBalance}</span>
+            <span className="text-xl"> {balance}</span>
           </h2>
           <form
             onSubmit={handleSubmit}
@@ -77,8 +94,21 @@ const CreateTransaction = () => {
               <input
                 className="border border-gray-300 rounded-md p-2 block w-full overflow-auto break-words"
                 type="text"
+                value={selectedRecipient}
+                onChange={handleRecipientChange}
                 placeholder="Recipient Address"
               />
+              <>
+                {otherUsers.map((user) => (
+                  <RadioBtn
+                    key={user.publicKey}
+                    label={user.username}
+                    value={user.publicKey}
+                    checked={selectedRecipient === user.publicKey}
+                    onChange={handleRecipientChange}
+                  />
+                ))}
+              </>
             </div>
             <div className="px-10 pt-10 w-full">
               <span className="pr-5 font-semibold">Amount</span>
