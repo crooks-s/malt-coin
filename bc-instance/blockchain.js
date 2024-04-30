@@ -10,12 +10,12 @@ class Transaction {
     this.timestamp = timestamp;
   }
 
-  // Function to calculate the hash of the transaction
+  // calculate the hash of the transaction
   calculateHash() {
     return SHA256(this.fromAddress + this.toAddress + this.amount).toString();
   }
 
-  // Function to sign the transaction
+  // sign the transaction
   signTransaction(signingKey) {
     if (signingKey.getPublic("hex") !== this.fromAddress) {
       throw new Error("You cannot sign transactions for other wallets!");
@@ -26,9 +26,13 @@ class Transaction {
     this.signature = sig.toDER("hex"); // convert the signature to hex
   }
 
-  // Function to check if the transaction is valid
+  // check if the transaction is valid
   isValid() {
-    if (this.fromAddress === null) return true; // if the transaction is a mining reward
+    if (
+      this.fromAddress === null ||
+      this.fromAddress === "Initial distribution"
+    )
+      return true; // if the transaction is a mining reward
     if (!this.signature || this.signature.length === 0) {
       throw new Error("No signature in this transaction");
     }
@@ -41,7 +45,7 @@ class Block {
   /**
    *
    * @param {*} timestamp - timestamp of the block creation
-   * @param {*} data - any data that you want to store in your block
+   * @param {*} transactions - any data that you want to store in your block
    * @param {*} previousHash - hash of the previous block
    */
   constructor(timestamp, transactions, previousHash = "") {
@@ -52,7 +56,7 @@ class Block {
     this.nonce = 0;
   }
 
-  // Function to calculate the hash of the block
+  // calculate the hash of the block
   calculateHash() {
     return SHA256(
       this.previousHash +
@@ -62,17 +66,15 @@ class Block {
     ).toString(); // note: JSON.stringify is used to convert the data object to a string
   }
 
-  // Function to mine the block
+  // mine the block
   mineBlock(difficulty) {
     while (this.hash.substring(0, difficulty) !== "0".repeat(difficulty)) {
       this.hash = this.calculateHash();
       this.nonce++;
     }
-
-    // console.log("Block mined: " + this.hash);
   }
 
-  // Function to check if all the transactions in the block are valid
+  // check if all the transactions in the block are valid
   hasValidTransactions() {
     for (const transaction of this.transactions) {
       if (!transaction.isValid()) {
@@ -84,17 +86,30 @@ class Block {
 }
 
 class Blockchain {
-  // initializes the blockchain
   constructor() {
     this.chain = [this.createGenesisBlock()];
     this.difficulty = 0;
     this.pendingTransactions = [];
     this.miningReward = 5;
+    this.totalSupply = 10000;
   }
+
   createGenesisBlock() {
     const date = new Date(2024, 0, 1);
     const ms = date.getTime();
-    return new Block(ms, 0, "0");
+    return new Block(ms, [], "0");
+  }
+
+  distributeInitalSupply(address1, address2, address3) {
+    const date = new Date(2024, 0, 1);
+    const ms = date.getTime();
+    const tx1 = new Transaction("Initial distribution", address1, 1000, ms);
+    this.pendingTransactions.push(tx1);
+    const tx2 = new Transaction("Initial distribution", address2, 2000, ms);
+    this.pendingTransactions.push(tx2);
+    const tx3 = new Transaction("Initial distribution", address3, 1500, ms);
+    this.pendingTransactions.push(tx3);
+    this.totalSupply -= 4500;
   }
 
   getLatestBlock() {
@@ -110,12 +125,10 @@ class Blockchain {
       this.getLatestBlock().hash
     );
     block.mineBlock(this.difficulty);
-
-    // console.log("Block successfully mined!");
     this.chain.push(block);
 
+    // pend the mining reward for the next miner
     this.pendingTransactions = [
-      // give the mining reward to the miner
       new Transaction(null, miningRewardAddress, this.miningReward, ms),
     ];
   }
@@ -124,31 +137,31 @@ class Blockchain {
     if (!transaction.fromAddress || !transaction.toAddress) {
       throw new Error("Transaction must include from and to address");
     }
-
     if (!transaction.isValid()) {
       throw new Error("Cannot add invalid transaction to chain");
     }
-
     this.pendingTransactions.push(transaction);
   }
 
   getBalanceOfAddress(address) {
     let balance = 0;
-
+    // Iterate over each block in the blockchain
     for (const block of this.chain) {
+      // Iterate over each transaction in the block
       for (const transaction of block.transactions) {
+        // If the transaction is from the target address, subtract the amount
         if (transaction.fromAddress === address) {
-          // if the address is the sender
           balance -= transaction.amount;
         }
+        // If the transaction is to the target address, add the amount
         if (transaction.toAddress === address) {
-          // if the address is the receiver
           balance += transaction.amount;
         }
       }
     }
     return balance;
   }
+  
 
   isChainValid() {
     for (let i = 1; i < this.chain.length; i++) {
@@ -167,5 +180,4 @@ class Blockchain {
   }
 }
 
-module.exports.Blockchain = Blockchain;
-module.exports.Transaction = Transaction;
+export { Blockchain, Transaction };

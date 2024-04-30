@@ -1,6 +1,6 @@
 "use client";
 
-import users from "@/bc-instance/users/data";
+import users from "@/bc-instance/data";
 import { useState } from "react";
 import { useLoginStore } from "@/store";
 import { useRouter } from 'next/navigation';

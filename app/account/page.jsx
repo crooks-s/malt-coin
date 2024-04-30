@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import users from "@/bc-instance/users/data";
 import { useLoginStore } from "@/store";
+import { blockchainInstance } from "@/bc-instance/data";
 
 const AccountPage = () => {
   const user = useLoginStore((state) => state.user);
@@ -21,7 +21,7 @@ const AccountPage = () => {
               {user.firstName} {user.lastName}
             </p>
             <h2 className="font-semibold">Account balance</h2>
-            <p>{user.maltBalance} maltcoins</p>
+            <p>{blockchainInstance.getBalanceOfAddress(user.publicKey)} maltcoins</p>
             <h2 className="font-semibold overflow-x-auto">
               Wallet Address
             </h2>
