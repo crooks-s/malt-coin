@@ -101,13 +101,26 @@ class Blockchain {
   }
 
   distributeInitalSupply(address1, address2, address3) {
-    const date = new Date(2024, 0, 1);
-    const ms = date.getTime();
-    const tx1 = new Transaction("Initial distribution", address1, 1000, ms);
+    const tx1 = new Transaction(
+      "Initial distribution",
+      address1,
+      1000,
+      new Date(2024, 0, 1).getTime()
+    );
     this.pendingTransactions.push(tx1);
-    const tx2 = new Transaction("Initial distribution", address2, 2000, ms);
+    const tx2 = new Transaction(
+      "Initial distribution",
+      address2,
+      2000,
+      new Date(2024, 0, 1).getTime()
+    );
     this.pendingTransactions.push(tx2);
-    const tx3 = new Transaction("Initial distribution", address3, 1500, ms);
+    const tx3 = new Transaction(
+      "Initial distribution",
+      address3,
+      1500,
+      new Date(2024, 0, 1).getTime()
+    );
     this.pendingTransactions.push(tx3);
     this.totalSupply -= 4500;
   }
@@ -116,11 +129,12 @@ class Blockchain {
     return this.chain[this.chain.length - 1];
   }
 
-  minePendingTransactions(miningRewardAddress) {
-    const date = new Date(2024, 2, 1);
-    const ms = date.getTime();
+  minePendingTransactions(
+    miningRewardAddress,
+    timestamp = new Date().getTime()
+  ) {
     let block = new Block(
-      ms,
+      timestamp,
       this.pendingTransactions,
       this.getLatestBlock().hash
     );
@@ -129,7 +143,7 @@ class Blockchain {
 
     // pend the mining reward for the next miner
     this.pendingTransactions = [
-      new Transaction(null, miningRewardAddress, this.miningReward, ms),
+      new Transaction(null, miningRewardAddress, this.miningReward, timestamp),
     ];
   }
 
@@ -159,9 +173,16 @@ class Blockchain {
         }
       }
     }
+    for (const transaction of this.pendingTransactions) {
+      if (transaction.fromAddress === address) {
+        balance -= transaction.amount;
+        // if (transaction.toAddress === address) {
+        //   balance += transaction.amount;
+        // }
+      }
+    }
     return balance;
   }
-  
 
   isChainValid() {
     for (let i = 1; i < this.chain.length; i++) {

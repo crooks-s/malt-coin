@@ -13,14 +13,15 @@ const LoginPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const user = users.find((user) => user.username === username);
+
+    const user = users.find((user) => user.username === username.trim());
 
     if (!user || user.password !== password) {
       setErrors(["Invalid username or password"]);
       return;
     }
 
-    if (username === user.username && password === user.password) {
+    if (username.trim() === user.username && password === user.password) {
       useLoginStore.setState({ isLoggedIn: true });
       useLoginStore.setState({ user });
       alert("Login successful");

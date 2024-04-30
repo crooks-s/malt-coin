@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Table,
   TableBody,
@@ -11,12 +9,13 @@ import {
 } from "@/components/ui/table";
 
 const TableWrapper = ({ transactions }) => {
-
-  const formattedDate = new Date().toLocaleString();
+  const formattedDate = (ms) => new Date(ms).toLocaleString();
 
   return (
     <>
-    <h1 className="text-2xl font-bold text-center py-5">List of Pending Transactions</h1>
+      <h1 className="text-2xl font-bold text-center py-5">
+        List of Pending Transactions
+      </h1>
       <Table>
         <TableHeader>
           <TableRow>
@@ -32,26 +31,25 @@ const TableWrapper = ({ transactions }) => {
         <TableBody>
           {transactions.map((transaction, index) => (
             <TableRow key={index}>
-              <TableCell key={`transaction_${index}`} className="w-2 text-center">
+              <TableCell
+                key={`transaction_${index}`}
+                className="w-2 text-center"
+              >
                 {index + 1}
               </TableCell>
-              <TableCell
-                className="max-w-xs overflow-hidden break-words px-16"
-              >
+              <TableCell className="max-w-xs overflow-hidden break-words px-16">
                 {transaction.fromAddress
                   ? transaction.fromAddress
                   : "System: Mining Reward"}
               </TableCell>
-              <TableCell
-                className="max-w-xs overflow-hidden break-words"
-              >
+              <TableCell className="max-w-xs overflow-hidden break-words">
                 {transaction.toAddress}
               </TableCell>
-              <TableCell className="w-2 text-center px-16" >
+              <TableCell className="w-2 text-center px-16">
                 {transaction.amount}
               </TableCell>
-              <TableCell className="w-2 text-center px-16" >
-                {formattedDate}
+              <TableCell className="w-2 text-center px-16">
+                {formattedDate(transaction.timestamp)}
               </TableCell>
             </TableRow>
           ))}

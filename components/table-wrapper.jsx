@@ -9,12 +9,7 @@ import {
   TableRow,
 } from "/components/ui/table";
 
-const TableWrapper = ({
-  selectedBlock,
-}) => {
-
-  const formattedDate = new Date(selectedBlock.timestamp).toLocaleString();
-
+const TableWrapper = ({ selectedBlock }) => {
   return (
     <Table>
       <TableHeader>
@@ -31,24 +26,22 @@ const TableWrapper = ({
       <TableBody>
         {selectedBlock.transactions.map((transaction, index) => (
           <TableRow key={index}>
-            <TableCell className="w-2 text-center">
-              {index + 1}
-            </TableCell>
-            <TableCell
-              className="max-w-xs overflow-hidden break-words px-16"
-            >
+            <TableCell className="w-2 text-center">{index + 1}</TableCell>
+            <TableCell className="max-w-xs overflow-hidden break-words px-16">
               {transaction.fromAddress
                 ? transaction.fromAddress
                 : "System: Mining Reward"}
             </TableCell>
-            <TableCell
-              className="max-w-xs overflow-hidden break-words"
-            >
+            <TableCell className="max-w-xs overflow-hidden break-words">
               {transaction.toAddress}
             </TableCell>
-            <TableCell className="w-2 text-center px-16" >{transaction.amount}</TableCell>
-            <TableCell className="w-2 text-center px-16">{formattedDate}</TableCell>
-            <TableCell >
+            <TableCell className="w-2 text-center px-16">
+              {transaction.amount}
+            </TableCell>
+            <TableCell className="w-2 text-center px-16">
+              {new Date(transaction.timestamp).toLocaleString()}
+            </TableCell>
+            <TableCell>
               {selectedBlock.hasValidTransactions() ? "yes" : "no"}
             </TableCell>
           </TableRow>

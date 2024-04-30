@@ -14,6 +14,8 @@ const CreateTransaction = () => {
   const [otherUsers, setOtherUsers] = useState([]);
   const [balance, setBalance] = useState(0);
   const [selectedRecipient, setSelectedRecipient] = useState("");
+  const [senderAddress, setSenderAddress] = useState("");
+  const [amount, setAmount] = useState(0);
 
   const handleRecipientChange = (e) => {
     setSelectedRecipient(e.target.value);
@@ -21,6 +23,7 @@ const CreateTransaction = () => {
 
   useEffect(() => {
     if (user) {
+      setSenderAddress(user.publicKey); // get sender address
       setOtherUsers(users.filter((u) => u.username !== user.username)); // get other users
       setBalance(blockchainInstance.getBalanceOfAddress(user.publicKey)); // get balance
     }
@@ -28,15 +31,12 @@ const CreateTransaction = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const senderAddress = e.target[0].value;
-    const recipientAddress = e.target[1].value;
-    const amount = e.target[2].value;
 
-    if (!senderAddress || !recipientAddress || !amount) {
+    if (!senderAddress || !selectedRecipient || !amount) {
       e.preventDefault();
       alert("Please fill in all fields");
       return;
-    } else if (amount > user.maltBalance) {
+    } else if (amount > balance) {
       e.preventDefault();
       alert("Insufficient balance");
       return;
@@ -46,21 +46,14 @@ const CreateTransaction = () => {
       return;
     }
 
-    // for testing purposes. this should be removed and changed to the current date
-    let date = new Date(2024, 2, 2);
-    let ms = date.getTime();
-
     const tx = new Transaction(
       senderAddress,
-      recipientAddress,
+      selectedRecipient,
       amount,
-      ms // temp date for testing
+      new Date().toLocaleString()
     );
-    tx.signTransaction(user.keyObj); // temp using first key
+    tx.signTransaction(user.keyObj);
     blockchainInstance.addTransaction(tx);
-    e.target[1].value = "";
-    e.target[2].value = "";
-    user.maltBalance -= amount;
     alert("Transaction created");
     router.push("/transactions/pending");
   };
@@ -115,8 +108,10 @@ const CreateTransaction = () => {
               <input
                 className="border border-gray-300 rounded-md p-2"
                 type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
                 min="0"
-                max={user.maltWallet}
+                max={balance}
                 placeholder="Amount"
               />
             </div>

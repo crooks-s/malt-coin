@@ -2,7 +2,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import users from "@/bc-instance/users/data";
+import users from "@/bc-instance/data";
 
 const SignUp = () => {
   const idCounter = users.length + 1;

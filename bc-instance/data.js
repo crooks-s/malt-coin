@@ -67,34 +67,74 @@ blockchainInstance.distributeInitalSupply(
 
 // Create some transactions
 // block 1
-let date = new Date(2024, 0, 2);
-let ms = date.getTime();
-const tx1 = new Transaction(users[0].publicKey, users[1].publicKey, 200, ms);
+const tx1 = new Transaction(
+  users[0].publicKey,
+  users[1].publicKey,
+  200,
+  new Date(2024, 0, 2).getTime()
+);
 tx1.signTransaction(users[0].keyObj);
 blockchainInstance.addTransaction(tx1);
-const tx1_2 = new Transaction(users[0].publicKey, users[2].publicKey, 50, ms);
+
+const tx1_2 = new Transaction(
+  users[0].publicKey,
+  users[2].publicKey,
+  50,
+  new Date(2024, 0, 2).getTime()
+);
 tx1_2.signTransaction(users[0].keyObj);
 blockchainInstance.addTransaction(tx1_2);
-blockchainInstance.minePendingTransactions(users[0].publicKey);
+new Date(2024, 10, 10).getTime();
+blockchainInstance.minePendingTransactions(
+  users[0].publicKey,
+  new Date(2024, 0, 3).getTime()
+);
 
 // block 2
-date = new Date(2024, 0, 3);
-ms = date.getTime();
-const tx2 = new Transaction(users[0].publicKey, users[1].publicKey, 300, ms);
+const tx2 = new Transaction(
+  users[0].publicKey,
+  users[1].publicKey,
+  300,
+  new Date(2024, 0, 4).getTime()
+);
 tx2.signTransaction(users[0].keyObj);
 blockchainInstance.addTransaction(tx2);
-const tx2_2 = new Transaction(users[0].publicKey, users[2].publicKey, 50, ms);
+const tx2_2 = new Transaction(
+  users[0].publicKey,
+  users[2].publicKey,
+  50,
+  new Date(2024, 0, 4).getTime()
+);
 tx2_2.signTransaction(users[0].keyObj);
 blockchainInstance.addTransaction(tx2_2);
-blockchainInstance.minePendingTransactions(users[1].publicKey);
+blockchainInstance.minePendingTransactions(
+  users[1].publicKey,
+  new Date(2024, 0, 5).getTime()
+);
 
 // block 3
-date = new Date(2024, 0, 4);
-ms = date.getTime();
-const tx3 = new Transaction(users[1].publicKey, users[2].publicKey, 150, ms);
+const tx3 = new Transaction(
+  users[1].publicKey,
+  users[2].publicKey,
+  150,
+  new Date(2024, 0, 6).getTime()
+);
 tx3.signTransaction(users[1].keyObj);
 blockchainInstance.addTransaction(tx3);
-blockchainInstance.minePendingTransactions(users[2].publicKey);
+blockchainInstance.minePendingTransactions(
+  users[2].publicKey,
+  new Date(2024, 0, 7).getTime()
+);
+
+// add pending transaction
+const tx4 = new Transaction(
+  users[0].publicKey,
+  users[2].publicKey,
+  150,
+  new Date(2024, 2, 2).getTime()
+);
+tx4.signTransaction(users[0].keyObj);
+blockchainInstance.addTransaction(tx4);
 
 export { blockchainInstance };
 export default users;
