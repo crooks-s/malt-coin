@@ -20,7 +20,6 @@ class Transaction {
     if (signingKey.getPublic("hex") !== this.fromAddress) {
       throw new Error("You cannot sign transactions for other wallets!");
     }
-
     const hashTx = this.calculateHash(); // hash the transaction
     const sig = signingKey.sign(hashTx, "base64"); // sign the hash
     this.signature = sig.toDER("hex"); // convert the signature to hex
@@ -29,12 +28,12 @@ class Transaction {
   // check if the transaction is valid
   isValid() {
     if (
-      this.fromAddress === null ||
+      this.fromAddress === "0x0" ||
       this.fromAddress === "Initial distribution"
     )
       return true; // if the transaction is a mining reward
     if (!this.signature || this.signature.length === 0) {
-      throw new Error("No signature in this transaction");
+      throw new Error("No signature in this transaction"); // return false
     }
     const publicKey = ec.keyFromPublic(this.fromAddress, "hex"); // get the public key
     return publicKey.verify(this.calculateHash(), this.signature); // verify the signature
@@ -150,7 +149,7 @@ class Blockchain {
 
     // pend the mining reward for the next miner
     this.pendingTransactions = [
-      new Transaction(null, miningRewardAddress, this.miningReward, timestamp),
+      new Transaction("0x0", miningRewardAddress, this.miningReward, timestamp),
     ];
   }
 

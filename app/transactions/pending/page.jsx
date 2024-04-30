@@ -33,7 +33,7 @@ const PendingTransactionsPage = () => {
         className="bg-slate-500 text-white p-2 rounded-md cursor-not-allowed "
         disabled={true}
       >
-        Login to mine
+        Login to start mining
       </button>}
       </div>
     </>
