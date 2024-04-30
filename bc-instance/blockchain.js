@@ -43,11 +43,10 @@ class Transaction {
 
 class Block {
   /**
-   *
    * @param {*} timestamp - timestamp of the block creation
    * @param {*} transactions - any data that you want to store in your block
    * @param {*} previousHash - hash of the previous block
-   */
+   **/
   constructor(timestamp, transactions, previousHash = "") {
     this.timestamp = timestamp;
     this.transactions = transactions;
@@ -87,12 +86,20 @@ class Block {
 
 class Blockchain {
   constructor() {
+    this.name = "Maltcoin";
+    this.symbol = "MALT";
+    this.decimals = 0;
     this.chain = [this.createGenesisBlock()];
     this.difficulty = 0;
     this.pendingTransactions = [];
     this.miningReward = 5;
     this.totalSupply = 10000;
   }
+
+  name = () => this.name;
+  symbol = () => this.symbol;
+  decimals = () => this.decimals;
+  totalSupply = () => this.totalSupply;
 
   createGenesisBlock() {
     const date = new Date(2024, 0, 1);
