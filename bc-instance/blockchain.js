@@ -3,12 +3,17 @@ const EC = require("elliptic").ec;
 const ec = new EC("secp256k1"); // secp256k1 is the algorithm used in bitcoin
 
 class Transaction {
+  /**
+   *
+   * @param {string} fromAddress - the wallet address of the sender
+   * @param {string} toAddress - the wallet address of the receiver
+   * @param {number} amount - the amount to be sent
+   * @param {number} fee - the fee to be paid
+   * @param {string} timestamp - the timestamp of the transaction
+   */
   constructor(fromAddress, toAddress, amount, fee, timestamp) {
     this.fromAddress = fromAddress;
     this.toAddress = toAddress;
-    // fee: will be added to the mining reward
-    // fee: will be used to incentivize miners to include transactions in the block
-    // fee: will change based on network congestion, user preference, miner preference, etc.
     this.fee = fee;
     this.amount = amount;
     this.timestamp = timestamp;
@@ -44,9 +49,9 @@ class Transaction {
 
 class Block {
   /**
-   * @param {*} timestamp - timestamp of the block creation
-   * @param {*} transactions - any data that you want to store in your block
-   * @param {*} previousHash - hash of the previous block
+   * @param {string} timestamp - timestamp of the block creation
+   * @param {currently set to number but should be object} transactions - any data that you want to store in your block
+   * @param {string} previousHash - hash of the previous block
    **/
   constructor(timestamp, transactions, previousHash = "") {
     this.timestamp = timestamp;
@@ -59,8 +64,9 @@ class Block {
   // calculate the hash of the block
   calculateHash() {
     return SHA256(
-      this.previousHash +
-        this.timestamp +
+      this.timestamp +
+        JSON.stringify(this.transactions) +
+        this.previousHash +
         JSON.stringify(this.data) +
         this.nonce
     ).toString(); // note: JSON.stringify is used to convert the data object to a string
@@ -89,12 +95,13 @@ class Blockchain {
   constructor() {
     this.name = "Maltcoin";
     this.symbol = "MALT";
+    this.version = "1.0";
     this.decimals = 0;
     this.chain = [this.createGenesisBlock()];
     this.difficulty = 0;
     this.pendingTransactions = [];
     this.miningReward = 5;
-    this.totalSupply = 10000;
+    this.totalSupply = 0;
   }
 
   name = () => this.name;
@@ -108,32 +115,19 @@ class Blockchain {
     return new Block(ms, [], "0");
   }
 
-  distributeInitalSupply(address1, address2, address3) {
-    const tx1 = new Transaction(
-      "0x0",
-      address1,
-      1000,
-      0,
-      new Date(2024, 0, 1).getTime()
-    );
-    this.pendingTransactions.push(tx1);
-    const tx2 = new Transaction(
-      "0x0",
-      address2,
-      2000,
-      0,
-      new Date(2024, 0, 1).getTime()
-    );
-    this.pendingTransactions.push(tx2);
-    const tx3 = new Transaction(
-      "0x0",
-      address3,
-      1500,
-      0,
-      new Date(2024, 0, 1).getTime()
-    );
-    this.pendingTransactions.push(tx3);
+  /**
+   *
+   * @param {string} address - the address of the wallet to mint the coins to
+   * @param {number} amount - the amount of coins to mint
+   * @param {string} timestamp - the timestamp of the minting
+   */
+  mint(address, amount, timestamp = new Date().getTime()) {
+    const tx = new Transaction("0x0", address, amount, 0, timestamp);
+    this.pendingTransactions.push(tx);
+    this.totalSupply += amount;
   }
+
+  burn(){}
 
   getLatestBlock() {
     return this.chain[this.chain.length - 1];
@@ -157,7 +151,13 @@ class Blockchain {
       totalFees += transaction.fee;
     }
     this.pendingTransactions = [
-      new Transaction("0x0", miningRewardAddress, this.miningReward + totalFees, 0, timestamp),
+      new Transaction(
+        "0x0",
+        miningRewardAddress,
+        this.miningReward + totalFees,
+        0,
+        timestamp
+      ),
     ];
   }
 

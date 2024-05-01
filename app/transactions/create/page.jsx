@@ -50,6 +50,7 @@ const CreateTransaction = () => {
       senderAddress,
       selectedRecipient,
       amount,
+      10,
       new Date().toLocaleString()
     );
     tx.signTransaction(user.keyObj);

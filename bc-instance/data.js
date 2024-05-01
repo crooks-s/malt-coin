@@ -59,11 +59,9 @@ const users = [
 ];
 
 // distribute initial supply
-blockchainInstance.distributeInitalSupply(
-  users[0].publicKey,
-  users[1].publicKey,
-  users[2].publicKey
-);
+blockchainInstance.mint(users[0].publicKey, 1000, new Date(2024, 0, 1).getTime());
+blockchainInstance.mint(users[1].publicKey, 2000, new Date(2024, 0, 1).getTime());
+blockchainInstance.mint(users[2].publicKey, 1500, new Date(2024, 0, 1).getTime());
 
 // Create some transactions
 // block 1
