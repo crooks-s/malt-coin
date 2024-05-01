@@ -127,7 +127,14 @@ class Blockchain {
     this.totalSupply += amount;
   }
 
-  burn(){}
+  burn(address, amount, timestamp = new Date().getTime()) {
+    if (this.getBalanceOfAddress(address) < amount) {
+      throw new Error("Insufficient balance");
+    }
+    const tx = new Transaction(address, "0x0", amount, 0, timestamp);
+    this.pendingTransactions.push(tx);
+    this.totalSupply -= amount;
+  }
 
   getLatestBlock() {
     return this.chain[this.chain.length - 1];
