@@ -25,7 +25,7 @@ const CreateTransaction = () => {
     if (user) {
       setSenderAddress(user.publicKey); // get sender address
       setOtherUsers(users.filter((u) => u.username !== user.username)); // get other users
-      setBalance(blockchainInstance.getBalanceOfAddress(user.publicKey)); // get balance
+      setBalance(blockchainInstance.balanceOf(user.publicKey)); // get balance
     }
   }, [user]);
 

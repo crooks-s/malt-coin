@@ -8,7 +8,7 @@ const AccountPage = () => {
   const [balance, setBalance] = useState(0);
   useEffect(() => {
     if (user) {
-      setBalance(blockchainInstance.getBalanceOfAddress(user.publicKey));
+      setBalance(blockchainInstance.balanceOf(user.publicKey));
     }
   }, [user]);
 

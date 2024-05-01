@@ -36,7 +36,7 @@ const CardWrapper = ({
       </CardContent>
       <Button
         onClick={onClick}
-        className="bg-slate-500 text-white p-3 mx-auto mb-5 rounded-xl"
+        className="bg-slate-500 text-white p-3 mx-auto mb-3 rounded-xl"
       >
         View Transactions
       </Button>

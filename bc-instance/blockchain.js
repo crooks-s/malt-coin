@@ -134,7 +134,7 @@ class Blockchain {
    * @param {string} timestamp - the timestamp of the burning
    */
   burn(address, amount, timestamp = new Date().getTime()) {
-    if (this.getBalanceOfAddress(address) < amount) {
+    if (this.balanceOf(address) < amount) {
       throw new Error("Insufficient balance");
     }
     const tx = new Transaction(address, "0x0", amount, 0, timestamp);
@@ -193,7 +193,7 @@ class Blockchain {
     this.pendingTransactions.push(transaction);
   }
 
-  getBalanceOfAddress(address) {
+  balanceOf(address) {
     let balance = 0;
     // Iterate over each block in the blockchain
     for (const block of this.chain) {
