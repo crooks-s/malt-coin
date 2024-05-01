@@ -127,6 +127,12 @@ class Blockchain {
     this.totalSupply += amount;
   }
 
+  /**
+   * 
+   * @param {string} address - the address of the wallet to burn the coins from
+   * @param {number} amount - the amount of coins to burn
+   * @param {string} timestamp - the timestamp of the burning
+   */
   burn(address, amount, timestamp = new Date().getTime()) {
     if (this.getBalanceOfAddress(address) < amount) {
       throw new Error("Insufficient balance");
@@ -140,6 +146,11 @@ class Blockchain {
     return this.chain[this.chain.length - 1];
   }
 
+  /**
+   * 
+   * @param {string} miningRewardAddress - the address of the wallet to receive the mining reward
+   * @param {string} timestamp - the timestamp of the mining
+   */
   minePendingTransactions(
     miningRewardAddress,
     timestamp = new Date().getTime()
@@ -152,7 +163,7 @@ class Blockchain {
     block.mineBlock(this.difficulty);
     this.chain.push(block);
 
-    // pend the mining transaction including fees
+    // pend the mining transaction including fees allocated to the miner
     let totalFees = 0;
     for (const transaction of this.pendingTransactions) {
       totalFees += transaction.fee;
@@ -168,6 +179,10 @@ class Blockchain {
     ];
   }
 
+  /**
+   * 
+   * @param {object} transaction - the transaction to be added to the blockchain
+   */
   addTransaction(transaction) {
     if (!transaction.fromAddress || !transaction.toAddress) {
       throw new Error("Transaction must include from and to address");
@@ -212,11 +227,9 @@ class Blockchain {
     for (let i = 1; i < this.chain.length; i++) {
       const currentBlock = this.chain[i];
       const previousBlock = this.chain[i - 1];
-
       if (!currentBlock.hasValidTransactions()) {
         return false;
       }
-
       if (currentBlock.previousHash !== previousBlock.hash) {
         return false;
       }
