@@ -15,7 +15,7 @@ export default function Header({ children }) {
   return (
     <header>
       <nav>
-        <div className="nav-wrapper bg-slate-300 flex flex-wrap justify-center items-center py-2 px-3">
+        <div className="nav-wrapper bg-slate-200 flex flex-wrap justify-center items-center py-2 px-3">
           <Link href="/" className="px-4">
             <Image src="/logo.svg" alt="logo" width={200} height={200} />
           </Link>
