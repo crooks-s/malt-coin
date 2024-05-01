@@ -7,13 +7,14 @@ import CardWrapper from "@/components/card-wrapper";
 import TableWrapper from "@/components/table-wrapper";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import NonSSRWrapper from "@/components/NonSSRWrapper";
 
 export default function Home() {
   const [blockNum, setBlockNum] = useState(0); // block number
   const selectedBlock = blockchainInstance.chain[blockNum]; // selected block using block number
 
   return (
-    <>
+    <NonSSRWrapper>
       <Header />
       <h1 className="px-4 text-xl font-semibold pt-10 text-center">
         Blocks on Chain
@@ -51,6 +52,6 @@ export default function Home() {
       </div>
 
       <Footer />
-    </>
+    </NonSSRWrapper>
   );
 }

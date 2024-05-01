@@ -140,5 +140,10 @@ const tx4 = new Transaction(
 tx4.signTransaction(users[0].keyObj);
 blockchainInstance.addTransaction(tx4);
 
+// deploy smart contract
+blockchainInstance.deploySmartContract(users[0].publicKey);
+
+console.log(blockchainInstance.SmartContracts);
+
 export { blockchainInstance };
 export default users;

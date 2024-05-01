@@ -2,6 +2,14 @@ const SHA256 = require("crypto-js/sha256");
 const EC = require("elliptic").ec;
 const ec = new EC("secp256k1"); // secp256k1 is the algorithm used in bitcoin
 
+class SmartContract {
+  constructor(owner) {
+    this.owner = owner;
+    this.methods = {};
+    this.NFTs = ["DN"];
+  }
+}
+
 class Transaction {
   /**
    *
@@ -102,12 +110,14 @@ class Blockchain {
     this.pendingTransactions = [];
     this.miningReward = 5;
     this.totalSupply = 0;
+    this.SmartContracts = [];
   }
 
   name = () => this.name;
   symbol = () => this.symbol;
   decimals = () => this.decimals;
   totalSupply = () => this.totalSupply;
+  getLatestBlock = () => this.chain[this.chain.length - 1];
 
   createGenesisBlock() {
     const date = new Date(2024, 0, 1);
@@ -128,7 +138,7 @@ class Blockchain {
   }
 
   /**
-   * 
+   *
    * @param {string} address - the address of the wallet to burn the coins from
    * @param {number} amount - the amount of coins to burn
    * @param {string} timestamp - the timestamp of the burning
@@ -142,12 +152,30 @@ class Blockchain {
     this.totalSupply -= amount;
   }
 
-  getLatestBlock() {
-    return this.chain[this.chain.length - 1];
+  /**
+   * Approve a spender to spend tokens on behalf of the token holder
+   * @param {string} spenderAddress - The address of the spender
+   * @param {number} amount - The amount of tokens to approve
+   * @param {string} ownerAddress - The address of the token holder
+   */
+  approve(spenderAddress, amount, ownerAddress) {
+    // Perform checks
+    if (!ownerAddress || !spenderAddress || isNaN(amount) || amount <= 0) {
+      throw new Error("Invalid parameters for approval");
+    }
+
+    // TODO: Find the token holder's account and update allowance
+    // const accountIndex = this.accounts.findIndex(
+    //   (account) => account.address === ownerAddress
+    // );
+    // if (accountIndex === -1) {
+    //   throw new Error("Token holder account not found");
+    // }
+    // this.accounts[accountIndex].allowance[spenderAddress] = amount;
   }
 
   /**
-   * 
+   *
    * @param {string} miningRewardAddress - the address of the wallet to receive the mining reward
    * @param {string} timestamp - the timestamp of the mining
    */
@@ -180,7 +208,7 @@ class Blockchain {
   }
 
   /**
-   * 
+   *
    * @param {object} transaction - the transaction to be added to the blockchain
    */
   addTransaction(transaction) {
@@ -213,9 +241,9 @@ class Blockchain {
     // Deduct pending transactions from the balance
     for (const transaction of this.pendingTransactions) {
       if (transaction.fromAddress === address) {
-          balance -= transaction.fee;
-          balance -= transaction.amount;
-          // if (transaction.toAddress === address) {
+        balance -= transaction.fee;
+        balance -= transaction.amount;
+        // if (transaction.toAddress === address) {
         //   balance += transaction.amount;
         // }
       }
@@ -235,6 +263,15 @@ class Blockchain {
       }
     }
     return true;
+  }
+
+  deploySmartContract(owner) {
+    const contract = new SmartContract(owner);
+    if (contract) {
+      this.SmartContracts.push(contract);
+      return true;
+    }
+    return false;
   }
 }
 
