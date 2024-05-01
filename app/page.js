@@ -21,6 +21,9 @@ export default function Home() {
       <h2 className="text-center text-lg">
         Current Height: {blockchainInstance.chain.length}
       </h2>
+      <h2 className="text-center text-lg">
+        Total Supply of MALT: {blockchainInstance.totalSupply}
+      </h2>
       <div className="flex w-full justify-center flex-wrap my-10 px-2">
         {blockchainInstance.chain.map((block, index) => (
           <CardWrapper
