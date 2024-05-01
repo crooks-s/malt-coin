@@ -177,9 +177,10 @@ class Blockchain {
     for (const block of this.chain) {
       // Iterate over each transaction in the block
       for (const transaction of block.transactions) {
-        // If the transaction is from the target address, subtract the amount
+        // If the transaction is from the target address, subtract the amount and fee
         if (transaction.fromAddress === address) {
           balance -= transaction.amount;
+          balance -= transaction.fee;
         }
         // If the transaction is to the target address, add the amount
         if (transaction.toAddress === address) {
@@ -187,10 +188,12 @@ class Blockchain {
         }
       }
     }
+    // Deduct pending transactions from the balance
     for (const transaction of this.pendingTransactions) {
       if (transaction.fromAddress === address) {
-        balance -= transaction.amount;
-        // if (transaction.toAddress === address) {
+          balance -= transaction.fee;
+          balance -= transaction.amount;
+          // if (transaction.toAddress === address) {
         //   balance += transaction.amount;
         // }
       }

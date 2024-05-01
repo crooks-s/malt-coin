@@ -116,6 +116,21 @@ const CreateTransaction = () => {
                 placeholder="Amount"
               />
             </div>
+            <div className="px-10 pt-10 w-full">
+              <span className="pr-5 font-semibold">Fee</span>
+              <input
+                className="border border-gray-300 rounded-md p-2"
+                type="number"
+                value="10"
+                disabled={true}
+              />
+            </div>
+            <div className="px-10 pt-10 w-full">
+              <span className="pr-5 font-semibold">Total deduction</span>
+              <span
+                className="border border-gray-300 rounded-md p-2">{parseInt(amount) + 10}
+              </span>
+            </div>
             <button
               type="submit"
               className="bg-slate-500 text-white p-2 rounded-md  mx-10 my-10"
