@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 const HeaderLogout = () => {
   const router = useRouter();
-  
+
   const googleSignout = () => {
     const auth = getAuth();
     signOut(auth)
@@ -23,12 +23,12 @@ const HeaderLogout = () => {
   };
 
   return (
-    <button
+    <Button
       onClick={googleSignout}
-      className="rounded-md mt-2 p-1 bg-white text-xs"
+      className={"bg-blue-500 rounded-xl text-white mx-4"}
     >
-      Logout of Google
-    </button>
+      Logout
+    </Button>
   );
 };
 
