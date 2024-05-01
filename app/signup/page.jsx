@@ -24,7 +24,7 @@ const SignUp = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col m-4 p-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col m-4 p-4 h-screen">
       <span>First Name</span>
       <input
         className="border border-gray-300 rounded-md p-2"
@@ -69,7 +69,7 @@ const SignUp = () => {
       />
 
       <Button
-        className="bg-blue-500 rounded-xl text-white mx-4 w-1/4 p-4 m-10"
+        className="bg-blue-500 rounded-xl text-white mx-4 w-1/4 p-4 mt-10"
         onClick={onSubmit}
       >
         Sign Up

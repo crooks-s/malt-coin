@@ -23,6 +23,7 @@ const TableWrapper = ({ transactions }) => {
             <TableHead className="w-2 px-16">From Address</TableHead>
             <TableHead className="w-2">To Address</TableHead>
             <TableHead className="w-2 px-16">Amount</TableHead>
+            <TableHead className="w-2 px-16">Fee</TableHead>
             <TableHead className="w-2 px-16">Timestamp</TableHead>
             <TableHead>Valid</TableHead>
           </TableRow>
@@ -47,6 +48,9 @@ const TableWrapper = ({ transactions }) => {
               </TableCell>
               <TableCell className="w-2 text-center px-16">
                 {transaction.amount}
+              </TableCell>
+              <TableCell className="w-2 text-center px-16">
+                {transaction.fee}
               </TableCell>
               <TableCell className="w-2 text-center px-16">
                 {formattedDate(transaction.timestamp)}

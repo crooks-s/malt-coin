@@ -13,7 +13,7 @@ const AccountPage = () => {
   }, [user]);
 
   return (
-    <>
+    <div className="h-screen">
       {useLoginStore((state) => state.isLoggedIn) ? (
         <>
           <div>
@@ -39,7 +39,7 @@ const AccountPage = () => {
           Please login to see your account details
         </h1>
       )}
-    </>
+    </div>
   );
 };
 

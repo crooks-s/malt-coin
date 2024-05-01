@@ -59,7 +59,7 @@ const CreateTransaction = () => {
   };
 
   return (
-    <>
+    <div className="h-screen">
       {useLoginStore((state) => state.isLoggedIn) && otherUsers.length > 0 ? (
         <>
           <h1 className="text-2xl font-bold mt-8 ml-10">
@@ -124,11 +124,13 @@ const CreateTransaction = () => {
           </form>
         </>
       ) : (
-        <h1 className="text-2xl font-bold mt-8 ml-10">
-          Please login to create a transaction
-        </h1>
+        <div className="h-screen">
+          <h1 className="text-2xl font-bold mt-8 ml-10">
+            Please login to create a transaction
+          </h1>
+        </div>
       )}
-    </>
+    </div>
   );
 };
 

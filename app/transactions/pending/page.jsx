@@ -8,6 +8,7 @@ import { useLoginStore } from "@/store";
 const PendingTransactionsPage = () => {
   const router = useRouter();
   const isLoggedIn = useLoginStore((state) => state.isLoggedIn);
+  const user = useLoginStore((state) => state.user);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -17,7 +18,7 @@ const PendingTransactionsPage = () => {
   };
 
   return (
-    <>
+    <div className="h-screen">
       <TableWrapper transactions={blockchainInstance.pendingTransactions} />
       <div className="flex items-center justify-center pb-10 pt-14">
         {isLoggedIn ? (
@@ -27,16 +28,17 @@ const PendingTransactionsPage = () => {
           >
             Start Mining
           </button>
-        ) : 
-        <button
-        onClick={handleSubmit}
-        className="bg-slate-500 text-white p-2 rounded-md cursor-not-allowed "
-        disabled={true}
-      >
-        Login to start mining
-      </button>}
+        ) : (
+          <button
+            onClick={handleSubmit}
+            className="bg-slate-500 text-white p-2 rounded-md cursor-not-allowed "
+            disabled={true}
+          >
+            Login to start mining
+          </button>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 

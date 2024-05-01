@@ -15,7 +15,7 @@ const SettingsPage = () => {
   };
 
   return (
-    <>
+    <div className="h-screen">
       {isLoggedIn ? (
         <form onSubmit={handleSubmit}>
           <div className="px-10 py-10">
@@ -49,9 +49,8 @@ const SettingsPage = () => {
         <h1 className="text-2xl font-bold mt-8 ml-10">
           Please login to update settings
         </h1>
-      
       )}
-    </>
+    </div>
   );
 };
 

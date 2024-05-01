@@ -30,7 +30,7 @@ const LoginPage = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="h-screen">
       {errors.length > 0
         ? errors.map((error, index) => (
             <div
@@ -63,7 +63,7 @@ const LoginPage = () => {
       </div>
       <button
         type="submit"
-        className="bg-slate-500 text-white p-2 rounded-md  mx-10 my-10"
+        className="bg-slate-500 text-white p-2 rounded-md  mx-10 mt-10"
       >
         Submit
       </button>

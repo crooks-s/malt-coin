@@ -71,6 +71,7 @@ const tx1 = new Transaction(
   users[0].publicKey,
   users[1].publicKey,
   200,
+  10,
   new Date(2024, 0, 2).getTime()
 );
 tx1.signTransaction(users[0].keyObj);
@@ -80,6 +81,7 @@ const tx1_2 = new Transaction(
   users[0].publicKey,
   users[2].publicKey,
   50,
+  10,
   new Date(2024, 0, 2).getTime()
 );
 tx1_2.signTransaction(users[0].keyObj);
@@ -95,6 +97,7 @@ const tx2 = new Transaction(
   users[0].publicKey,
   users[1].publicKey,
   300,
+  10,
   new Date(2024, 0, 4).getTime()
 );
 tx2.signTransaction(users[0].keyObj);
@@ -103,6 +106,7 @@ const tx2_2 = new Transaction(
   users[0].publicKey,
   users[2].publicKey,
   50,
+  10,
   new Date(2024, 0, 4).getTime()
 );
 tx2_2.signTransaction(users[0].keyObj);
@@ -117,6 +121,7 @@ const tx3 = new Transaction(
   users[1].publicKey,
   users[2].publicKey,
   150,
+  10,
   new Date(2024, 0, 6).getTime()
 );
 tx3.signTransaction(users[1].keyObj);
@@ -131,6 +136,7 @@ const tx4 = new Transaction(
   users[0].publicKey,
   users[2].publicKey,
   150,
+  10,
   new Date(2024, 2, 2).getTime()
 );
 tx4.signTransaction(users[0].keyObj);

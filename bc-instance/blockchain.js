@@ -3,16 +3,22 @@ const EC = require("elliptic").ec;
 const ec = new EC("secp256k1"); // secp256k1 is the algorithm used in bitcoin
 
 class Transaction {
-  constructor(fromAddress, toAddress, amount, timestamp) {
+  constructor(fromAddress, toAddress, amount, fee, timestamp) {
     this.fromAddress = fromAddress;
     this.toAddress = toAddress;
+    // fee: will be added to the mining reward
+    // fee: will be used to incentivize miners to include transactions in the block
+    // fee: will change based on network congestion, user preference, miner preference, etc.
+    this.fee = fee;
     this.amount = amount;
     this.timestamp = timestamp;
   }
 
   // calculate the hash of the transaction
   calculateHash() {
-    return SHA256(this.fromAddress + this.toAddress + this.amount).toString();
+    return SHA256(
+      this.fromAddress + this.toAddress + this.amount + this.fee
+    ).toString();
   }
 
   // sign the transaction
@@ -27,11 +33,7 @@ class Transaction {
 
   // check if the transaction is valid
   isValid() {
-    if (
-      this.fromAddress === "0x0" ||
-      this.fromAddress === "Initial distribution"
-    )
-      return true; // if the transaction is a mining reward
+    if (this.fromAddress === "0x0") return true; // if the transaction is a mining reward
     if (!this.signature || this.signature.length === 0) {
       throw new Error("No signature in this transaction"); // return false
     }
@@ -108,27 +110,29 @@ class Blockchain {
 
   distributeInitalSupply(address1, address2, address3) {
     const tx1 = new Transaction(
-      "Initial distribution",
+      "0x0",
       address1,
       1000,
+      0,
       new Date(2024, 0, 1).getTime()
     );
     this.pendingTransactions.push(tx1);
     const tx2 = new Transaction(
-      "Initial distribution",
+      "0x0",
       address2,
       2000,
+      0,
       new Date(2024, 0, 1).getTime()
     );
     this.pendingTransactions.push(tx2);
     const tx3 = new Transaction(
-      "Initial distribution",
+      "0x0",
       address3,
       1500,
+      0,
       new Date(2024, 0, 1).getTime()
     );
     this.pendingTransactions.push(tx3);
-    this.totalSupply -= 4500;
   }
 
   getLatestBlock() {
@@ -147,9 +151,13 @@ class Blockchain {
     block.mineBlock(this.difficulty);
     this.chain.push(block);
 
-    // pend the mining reward for the next miner
+    // pend the mining transaction including fees
+    let totalFees = 0;
+    for (const transaction of this.pendingTransactions) {
+      totalFees += transaction.fee;
+    }
     this.pendingTransactions = [
-      new Transaction("0x0", miningRewardAddress, this.miningReward, timestamp),
+      new Transaction("0x0", miningRewardAddress, this.miningReward + totalFees, 0, timestamp),
     ];
   }
 

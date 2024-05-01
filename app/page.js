@@ -39,11 +39,14 @@ export default function Home() {
       <h1 className="px-4 text-xl font-semibold pt-10 pb-5 text-center">
         List of Transactions in Block #{blockNum}
       </h1>
-      {selectedBlock.transactions.length > 0 ? (
-        <TableWrapper selectedBlock={selectedBlock} />
-      ) : (
-        <p className="text-center">No transactions in this block</p>
-      )}
+      <div className="mb-20">
+        {selectedBlock.transactions.length > 0 ? (
+          <TableWrapper selectedBlock={selectedBlock} />
+        ) : (
+          <p className="text-center mb-20">No transactions in this block</p>
+        )}
+      </div>
+
       <Footer />
     </>
   );
