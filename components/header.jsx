@@ -10,7 +10,6 @@ import HeaderLogout from "./HeaderBtns/HeaderLogout";
 import HeaderSignUp from "./HeaderBtns/HeaderSignUp";
 
 export default function Header({ children }) {
-  const user = useLoginStore((state) => state.user);
 
   return (
     <header>
@@ -37,10 +36,7 @@ export default function Header({ children }) {
               <HeaderSignUp href={"/signup"} />
             </>
           ) : (
-            <>
-              <HeaderLogout />
-              <span>Logged in as {user.username}</span>
-            </>
+            <HeaderLogout />
           )}
         </div>
       </nav>

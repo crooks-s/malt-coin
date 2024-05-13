@@ -1,7 +1,6 @@
 "use client";
-import { useState } from "react";
-
-import { blockchainInstance } from "@/bc-instance/data";
+import { useState, useEffect } from "react";
+import { blockchainInstance, cbOracle } from "@/bc-instance/data";
 
 import CardWrapper from "@/components/card-wrapper";
 import TableWrapper from "@/components/table-wrapper";
@@ -12,6 +11,13 @@ import NonSSRWrapper from "@/components/NonSSRWrapper";
 export default function Home() {
   const [blockNum, setBlockNum] = useState(0); // block number
   const selectedBlock = blockchainInstance.chain[blockNum]; // selected block using block number
+
+  // const ethRate = cbOracle.getUSDPrice().then((data) => {
+  //   return data.rates.ETH;
+  // });
+  // const base = cbOracle.getUSDPrice().then((data) => {
+  //   return data.rates.USD;
+  // });
 
   return (
     <NonSSRWrapper>
@@ -24,6 +30,14 @@ export default function Home() {
       </h2>
       <h2 className="text-center text-lg">
         Total Supply of MALT: {blockchainInstance.totalSupply}
+      </h2>
+      <h2 className="text-center text-lg">
+        Current ETH Price on Currency Beacon:
+        {/* {ethRate} tokens */} **commented out
+      </h2>
+      <h2 className="text-center text-lg">
+        BASE:
+        {/* ${base} USD */} **commented out
       </h2>
       <div className="flex w-full justify-center flex-wrap my-10 px-2">
         {blockchainInstance.chain.map((block, index) => (

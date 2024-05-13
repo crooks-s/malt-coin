@@ -1,12 +1,18 @@
-import { Blockchain, Transaction } from "./blockchain";
+import { Blockchain, Transaction, CBOracle, SmartContract } from "./blockchain";
 const EC = require("elliptic").ec;
 const ec = new EC("secp256k1"); // secp256k1 is the algorithm used in bitcoin
 
-/* TEST BLOCKCHAIN INSTANCE */
+/* TEST Blockchain instance */
 const blockchainInstance = new Blockchain();
 blockchainInstance.difficulty = 1;
 
-/* TEST USER DATA */
+/* TEST CBOracle */
+const cbOracle = new CBOracle();
+// cbOracle.getUSDPrice().then((data) => {
+//   return data.rates.USD;
+// });
+
+/* TEST User data */
 const johnsKey = ec.genKeyPair();
 const janesKey = ec.genKeyPair();
 const alicesKey = ec.genKeyPair();
@@ -59,9 +65,21 @@ const users = [
 ];
 
 // distribute initial supply
-blockchainInstance.mint(users[0].publicKey, 1000, new Date(2024, 0, 1).getTime());
-blockchainInstance.mint(users[1].publicKey, 2000, new Date(2024, 0, 1).getTime());
-blockchainInstance.mint(users[2].publicKey, 1500, new Date(2024, 0, 1).getTime());
+blockchainInstance.mint(
+  users[0].publicKey,
+  1000,
+  new Date(2024, 0, 1).getTime()
+);
+blockchainInstance.mint(
+  users[1].publicKey,
+  2000,
+  new Date(2024, 0, 1).getTime()
+);
+blockchainInstance.mint(
+  users[2].publicKey,
+  1500,
+  new Date(2024, 0, 1).getTime()
+);
 
 // Create some transactions
 // block 1
@@ -140,10 +158,10 @@ const tx4 = new Transaction(
 tx4.signTransaction(users[0].keyObj);
 blockchainInstance.addTransaction(tx4);
 
-// deploy smart contract
-blockchainInstance.deploySmartContract(users[0].publicKey);
+// TEST SmartContract instance
+const dnContract = new SmartContract(users[0].publicKey);
 
-console.log(blockchainInstance.SmartContracts);
+// deploy smart contract on the blockchain
+blockchainInstance.deploySmartContract(dnContract);
 
-export { blockchainInstance };
-export default users;
+export { blockchainInstance, cbOracle, users };

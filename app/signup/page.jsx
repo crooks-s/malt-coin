@@ -1,73 +1,86 @@
 "use client";
-import React from "react";
-import { useForm } from "react-hook-form";
+
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import users from "@/bc-instance/data";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useLoginStore } from "@/store";
+import { auth } from "@/firebase/firebaseConfig";
+import { useRouter } from "next/navigation";
 
 const SignUp = () => {
-  const idCounter = users.length + 1;
+  const setUser = useLoginStore((state) => state.setUser);
+  const isLoggedIn = useLoginStore((state) => state.isLoggedIn);
+  const setIsLoggedIn = useLoginStore((state) => state.setIsLoggedIn);
+  const router = useRouter();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-
-  const onSubmit = (data) => {
-    if (Object.keys(errors).length === 0) {
-      users.push({ id: idCounter, ...data });
-      console.log("User data:", data);
-      console.log("Updated users:", users);
-    } else {
-      console.log("Form has errors:", errors);
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.replace("/");
     }
+  });
+
+  // User state to store form data
+  const [userForm, setUserForm] = useState({
+    email: "",
+    password: "",
+  });
+
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setUserForm((prevUser) => ({
+      ...prevUser,
+      [name]: value,
+    }));
+  };
+
+
+  const onSubmit = (event) => {
+    event.preventDefault();
+
+    createUserWithEmailAndPassword(auth, userForm.email, userForm.password)
+      .then((userCredential) => {
+        // Signed up AND signed in per Firebase docs
+        setUser(userCredential.user);
+        setIsLoggedIn(true);
+        console.log("User signed up and signed in.");
+        router.replace("/");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.error(errorCode, errorMessage);
+      });
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col m-4 p-4 h-screen">
-      <span>First Name</span>
-      <input
-        className="border border-gray-300 rounded-md p-2"
-        type="text"
-        placeholder="First Name"
-        {...register("First Name", { required: true })}
-      />
-      <span className="mt-4">Last Name</span>
-      <input
-        className="border border-gray-300 rounded-md p-2"
-        type="text"
-        placeholder="Last Name"
-        {...register("Last Name", { required: true })}
-      />
+    <form
+      onSubmit={onSubmit}
+      className="flex flex-col m-4 p-4 h-screen"
+    >
       <span className="mt-4">Email</span>
       <input
         className="border border-gray-300 rounded-md p-2"
+        name="email"
         type="text"
         placeholder="Email"
-        {...register("Email", { required: true, pattern: /^\S+@\S+$/i })}
-      />
-      <span className="mt-4">Username</span>
-      <input
-        className="border border-gray-300 rounded-md p-2"
-        type="text"
-        placeholder="Username"
-        {...register}
+        onChange={onChange}
       />
       <span className="mt-4">Password</span>
       <input
+      name="password"
         className="border border-gray-300 rounded-md p-2"
         type="password"
+        onChange={onChange}
         placeholder="Password"
-        {...register}
       />
-      <span className="mt-4">Age</span>
+      <span className="mt-4">Verify Password</span>
       <input
         className="border border-gray-300 rounded-md p-2"
-        type="number"
-        placeholder="Age"
-        {...register("Age", { max: 125, min: 18 })}
+        name="verifyPassword"
+        onChange={onChange}
+        type="password"
+        placeholder="Password"
       />
-
       <Button
         className="bg-blue-500 rounded-xl text-white mx-4 w-1/4 p-4 mt-10"
         onClick={onSubmit}

@@ -1,10 +1,9 @@
 "use client";
 
-import { blockchainInstance, walletKeys } from "@/bc-instance/data";
+import { blockchainInstance, walletKeys, users } from "@/bc-instance/data";
 import { Transaction } from "@/bc-instance/blockchain";
 import { useLoginStore } from "@/store";
 import { useRouter } from "next/navigation";
-import users from "@/bc-instance/data";
 import { useEffect, useState } from "react";
 import RadioBtn from "@/components/transactions/radio-btns";
 
@@ -127,8 +126,8 @@ const CreateTransaction = () => {
             </div>
             <div className="px-10 pt-10 w-full">
               <span className="pr-5 font-semibold">Total deduction</span>
-              <span
-                className="border border-gray-300 rounded-md p-2">{parseInt(amount) + 10}
+              <span className="border border-gray-300 rounded-md p-2">
+                {parseInt(amount) + 10}
               </span>
             </div>
             <button

@@ -1,31 +1,49 @@
 "use client";
 
-import users from "@/bc-instance/data";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLoginStore } from "@/store";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
+import { auth } from "@/firebase/firebaseConfig";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 const LoginPage = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState([]);
+  const user = useLoginStore((state) => state.user);
+  const setUser = useLoginStore((state) => state.setUser);
+  const isLoggedIn = useLoginStore((state) => state.isLoggedIn);
+  const setIsLoggedIn = useLoginStore((state) => state.setIsLoggedIn);
   const router = useRouter();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const user = users.find((user) => user.username === username.trim());
-
-    if (!user || user.password !== password) {
-      setErrors(["Invalid username or password"]);
-      return;
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.replace("/");
     }
+  });
 
-    if (username.trim() === user.username && password === user.password) {
-      useLoginStore.setState({ isLoggedIn: true });
-      useLoginStore.setState({ user });
-      alert("Login successful");
-      router.push("/");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        setUser(userCredential.user);
+        console.log("User logged in: ");
+        setIsLoggedIn(true);
+        router.replace("/");
+      })
+      .catch((error) => {
+        console.error(error.message);
+        alert("Invalid email or password");
+      });
+  };
+
+  // Update email/password states on input change
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "email") {
+      setEmail(value);
+    } else if (name === "password") {
+      setPassword(value);
     }
   };
 
@@ -42,22 +60,24 @@ const LoginPage = () => {
           ))
         : null}
       <div className="px-10 py-10">
-        <span className="pr-5 font-semibold">Username</span>
+        <span className="pr-5 font-semibold">Email</span>
         <input
           className="border border-gray-300 rounded-md p-2"
+          name="email"
           type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Username"
+          value={email}
+          onChange={onChange}
+          placeholder="Email"
         />
       </div>
       <div className="px-10">
         <span className="pr-5 font-semibold">Password</span>
         <input
           className="border border-gray-300 rounded-md p-2"
+          name="password"
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={onChange}
           placeholder="Password"
         />
       </div>

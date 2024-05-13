@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 
 const HeaderLogout = () => {
   const router = useRouter();
+  const user = useLoginStore((state) => state.user);
 
   const googleSignout = () => {
     const auth = getAuth();
@@ -23,12 +24,15 @@ const HeaderLogout = () => {
   };
 
   return (
-    <Button
-      onClick={googleSignout}
-      className={"bg-blue-500 rounded-xl text-white mx-4"}
-    >
-      Logout
-    </Button>
+    <>
+      <Button
+        onClick={googleSignout}
+        className={"bg-blue-500 rounded-xl text-white mx-4"}
+      >
+        Logout
+      </Button>
+      {user ? <span>Logged in as {user.username}</span> : null}
+    </>
   );
 };
 

@@ -5,10 +5,51 @@ const ec = new EC("secp256k1"); // secp256k1 is the algorithm used in bitcoin
 class SmartContract {
   constructor(owner) {
     this.owner = owner;
-    this.methods = {};
     this.NFTs = ["DN"];
+    this.nftOwners = {};
+  }
+
+  // TODO: Transfer ownership of an NFT to another address
+  transferNFT(tokenId, toAddress) {
+    // Check if tokenId exists
+    if (!this.NFTs.includes(tokenId)) {
+      throw new Error("Token ID does not exist");
+    }
+    // Check if the sender owns the NFT
+    if (this.nftOwners[tokenId] !== msg.sender) {
+      throw new Error("Sender does not own the NFT");
+    }
+    // Transfer ownership to toAddress
+    this.nftOwners[tokenId] = toAddress;
   }
 }
+
+class CBOracle {
+  constructor() {
+    // this.url = `https://api.currencybeacon.com/v1/latest?api_key=${process.env.NEXT_PUBLIC_CURRENCY_BEACON_API_KEY}`;
+  }
+
+  // async getUSDPrice() {
+  //   try {
+  //     const response = await fetch(this.url);
+  //     const data = await response.json();
+  //     return data;
+  //   } catch (error) {
+  //     console.error("Error fetching data from Oracle", error);
+  //   }
+  // }
+}
+
+//TODO: updateSmartContract with the latest USD price from the Oracle
+async function updateSmartContract(oracle) {
+  const usdPrice = await oracle.getUSDPrice();
+  if (usdPrice !== null) {
+    // update the smart contract
+  } else {
+    console.log("Error fetching data from Oracle");
+  }
+}
+setInterval(updateSmartContract, 3600000); // update every hour
 
 class Transaction {
   /**
@@ -61,10 +102,11 @@ class Block {
    * @param {currently set to number but should be object} transactions - any data that you want to store in your block
    * @param {string} previousHash - hash of the previous block
    **/
-  constructor(timestamp, transactions, previousHash = "") {
+  constructor(timestamp, transactions, previousHash = "", smartContractState) {
     this.timestamp = timestamp;
     this.transactions = transactions;
     this.previousHash = previousHash;
+    this.smartContractState = smartContractState;
     this.hash = this.calculateHash();
     this.nonce = 0;
   }
@@ -75,7 +117,7 @@ class Block {
       this.timestamp +
         JSON.stringify(this.transactions) +
         this.previousHash +
-        JSON.stringify(this.data) +
+        JSON.stringify(this.smartContractState) +
         this.nonce
     ).toString(); // note: JSON.stringify is used to convert the data object to a string
   }
@@ -110,7 +152,7 @@ class Blockchain {
     this.pendingTransactions = [];
     this.miningReward = 5;
     this.totalSupply = 0;
-    this.SmartContracts = [];
+    this.smartContracts = [];
   }
 
   name = () => this.name;
@@ -265,14 +307,13 @@ class Blockchain {
     return true;
   }
 
-  deploySmartContract(owner) {
-    const contract = new SmartContract(owner);
+  deploySmartContract(contract) {
     if (contract) {
-      this.SmartContracts.push(contract);
+      this.smartContracts.push(contract);
       return true;
     }
     return false;
   }
 }
 
-export { Blockchain, Transaction };
+export { Blockchain, Transaction, CBOracle, SmartContract };
