@@ -41,15 +41,15 @@ class CBOracle {
 }
 
 //TODO: updateSmartContract with the latest USD price from the Oracle
-async function updateSmartContract(oracle) {
-  const usdPrice = await oracle.getUSDPrice();
-  if (usdPrice !== null) {
-    // update the smart contract
-  } else {
-    console.log("Error fetching data from Oracle");
-  }
-}
-setInterval(updateSmartContract, 3600000); // update every hour
+// async function updateSmartContract(oracle) {
+//   const usdPrice = await oracle.getUSDPrice();
+//   if (usdPrice !== null) {
+//     // update the smart contract
+//   } else {
+//     console.log("Error fetching data from Oracle");
+//   }
+// }
+// setInterval(updateSmartContract, 3600000); // update every hour
 
 class Transaction {
   /**

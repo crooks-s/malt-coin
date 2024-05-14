@@ -6,6 +6,7 @@ import { blockchainInstance } from "@/bc-instance/data";
 const AccountPage = () => {
   const user = useLoginStore((state) => state.user);
   const [balance, setBalance] = useState(0);
+  
   useEffect(() => {
     if (user) {
       setBalance(blockchainInstance.balanceOf(user.publicKey));

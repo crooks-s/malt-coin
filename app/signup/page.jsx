@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/firebase/firebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
+const EC = require("elliptic").ec;
+const ec = new EC("secp256k1"); // secp256k1 is the algorithm used in bitcoin
 
 const SignUp = () => {
   const setUser = useLoginStore((state) => state.setUser);
@@ -37,8 +39,12 @@ const SignUp = () => {
 
   // Add user to Firestore database
   const addUserToFirestore = async () => {
+    // const key = ec.genKeyPair();
+
     const docRef = addDoc(usersRef, {
       email: userForm.email,
+      // publicKey: key.getPublic("hex"),
+      // privateKey: key.getPrivate("hex"),
     });
   };
 
