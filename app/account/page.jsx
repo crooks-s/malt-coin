@@ -1,10 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useLoginStore } from "@/store";
-import { doc, getDoc } from "firebase/firestore"; // Import Firestore functions
-import { db } from "@/firebase/firebaseConfig"; // Import Firestore config
+import { doc, getDoc } from "firebase/firestore"; 
+import { db } from "@/firebase/firebaseConfig"; 
 import { CreateWallet } from "@/components/account/create-wallet";
 import { AddWallet } from "@/components/account/add-wallet";
+import { blockchainInstance } from "@/bc-instance/data"; 
 
 const AccountPage = () => {
   const user = useLoginStore((state) => state.user);
@@ -22,6 +23,8 @@ const AccountPage = () => {
             const userData = userDoc.data();
             setPublicKey(userData.publicKey || "No wallet address found");
             setPrivateKey(userData.privateKey || "No private key found");
+            const balance = blockchainInstance.balanceOf(userData.publicKey);
+            setBalance(balance);
           } else {
             console.log("No such document!");
           }
