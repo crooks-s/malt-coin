@@ -1,6 +1,6 @@
 const SHA256 = require("crypto-js/sha256");
 const EC = require("elliptic").ec;
-const ec = new EC("secp256k1"); // secp256k1 is the algorithm used in bitcoin
+const ec = new EC("secp256k1");
 
 // ************************************************************
 /*********************   BLOCK   *****************************/
@@ -194,9 +194,6 @@ class Blockchain {
       if (transaction.fromAddress === address) {
         balance -= transaction.fee;
         balance -= transaction.amount;
-        // if (transaction.toAddress === address) {
-        //   balance += transaction.amount;
-        // }
       }
     }
     return balance;
@@ -286,18 +283,17 @@ class Transaction {
     if (signingKey.getPublic("hex") !== this.fromAddress) {
       throw new Error("You cannot sign transactions for other wallets!");
     }
-    const hashTx = this.calculateHash(); // hash the transaction
-    const sig = signingKey.sign(hashTx, "base64"); // sign the hash
-    this.signature = sig.toDER("hex"); // convert the signature to hex
+    const hashTx = this.calculateHash();
+    const sig = signingKey.sign(hashTx, "base64");
+    this.signature = sig.toDER("hex");
   }
 
-  // check if the transaction is valid
   isValid() {
     if (this.fromAddress === "0x0") return true; // if the transaction is a mining reward
     if (!this.signature || this.signature.length === 0) {
-      throw new Error("No signature in this transaction"); // return false
+      throw new Error("No signature in this transaction");
     }
-    const publicKey = ec.keyFromPublic(this.fromAddress, "hex"); // get the public key
+    const publicKey = ec.keyFromPublic(this.fromAddress, "hex");
     return publicKey.verify(this.calculateHash(), this.signature); // verify the signature
   }
 }
