@@ -31,7 +31,7 @@ const HeaderLogout = () => {
       >
         Logout
       </Button>
-      {user ? <span>Logged in as {user.username}</span> : null}
+      {user ? <span>Logged in: {user.email}</span> : null}
     </>
   );
 };

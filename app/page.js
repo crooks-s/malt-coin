@@ -33,11 +33,11 @@ export default function Home() {
       </h2>
       <h2 className="text-center text-lg">
         Current ETH Price on Currency Beacon:
-        {/* {ethRate} tokens */} **commented out
+        {/* {ethRate} tokens */} **
       </h2>
       <h2 className="text-center text-lg">
-        BASE:
-        {/* ${base} USD */} **commented out
+        Reference/BASE:
+        {/* ${base} USD */} **
       </h2>
       <div className="flex w-full justify-center flex-wrap my-10 px-2">
         {blockchainInstance.chain.map((block, index) => (

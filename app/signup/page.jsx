@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/firebase/firebaseConfig";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, setDoc, doc } from "firebase/firestore";
 const EC = require("elliptic").ec;
 const ec = new EC("secp256k1"); // secp256k1 is the algorithm used in bitcoin
 
@@ -37,15 +37,20 @@ const SignUp = () => {
     }));
   };
 
-  // Add user to Firestore database
-  const addUserToFirestore = async () => {
-    // const key = ec.genKeyPair();
-
-    const docRef = addDoc(usersRef, {
-      email: userForm.email,
-      // publicKey: key.getPublic("hex"),
-      // privateKey: key.getPrivate("hex"),
-    });
+  const addUserToFirestore = async (uid) => {
+    try {
+      // Reference to the document with the specified UID under the 'users' collection
+      const userDocRef = doc(usersRef, uid);
+  
+      // Set document data
+      await setDoc(userDocRef, {
+        email: userForm.email,
+      });
+  
+      console.log("User added with ID: ", uid);
+    } catch (error) {
+      console.error("Error adding user to Firestore: ", error);
+    }
   };
 
   const onSubmit = (event) => {
@@ -53,11 +58,10 @@ const SignUp = () => {
 
     createUserWithEmailAndPassword(auth, userForm.email, userForm.password)
       .then((userCredential) => {
-        // Signed up AND signed in per Firebase docs
+        const uid = userCredential.user.uid;
         setUser(userCredential.user);
-        addUserToFirestore();
+        addUserToFirestore(uid);
         setIsLoggedIn(true);
-        console.log("User signed up and signed in.");
         router.replace("/");
       })
       .catch((error) => {

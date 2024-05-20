@@ -2,106 +2,10 @@ const SHA256 = require("crypto-js/sha256");
 const EC = require("elliptic").ec;
 const ec = new EC("secp256k1"); // secp256k1 is the algorithm used in bitcoin
 
-class SmartContract {
-  constructor(owner) {
-    this.owner = owner;
-    this.NFTs = ["DN"];
-    this.nftOwners = {};
-  }
-
-  // TODO: Transfer ownership of an NFT to another address
-  transferNFT(tokenId, toAddress) {
-    // Check if tokenId exists
-    if (!this.NFTs.includes(tokenId)) {
-      throw new Error("Token ID does not exist");
-    }
-    // Check if the sender owns the NFT
-    if (this.nftOwners[tokenId] !== msg.sender) {
-      throw new Error("Sender does not own the NFT");
-    }
-    // Transfer ownership to toAddress
-    this.nftOwners[tokenId] = toAddress;
-  }
-}
-
-class CBOracle {
-  constructor() {
-    // this.url = `https://api.currencybeacon.com/v1/latest?api_key=${process.env.NEXT_PUBLIC_CURRENCY_BEACON_API_KEY}`;
-  }
-
-  // async getUSDPrice() {
-  //   try {
-  //     const response = await fetch(this.url);
-  //     const data = await response.json();
-  //     return data;
-  //   } catch (error) {
-  //     console.error("Error fetching data from Oracle", error);
-  //   }
-  // }
-}
-
-//TODO: updateSmartContract with the latest USD price from the Oracle
-// async function updateSmartContract(oracle) {
-//   const usdPrice = await oracle.getUSDPrice();
-//   if (usdPrice !== null) {
-//     // update the smart contract
-//   } else {
-//     console.log("Error fetching data from Oracle");
-//   }
-// }
-// setInterval(updateSmartContract, 3600000); // update every hour
-
-class Transaction {
-  /**
-   *
-   * @param {string} fromAddress - the wallet address of the sender
-   * @param {string} toAddress - the wallet address of the receiver
-   * @param {number} amount - the amount to be sent
-   * @param {number} fee - the fee to be paid
-   * @param {string} timestamp - the timestamp of the transaction
-   */
-  constructor(fromAddress, toAddress, amount, fee, timestamp) {
-    this.fromAddress = fromAddress;
-    this.toAddress = toAddress;
-    this.fee = fee;
-    this.amount = amount;
-    this.timestamp = timestamp;
-  }
-
-  // calculate the hash of the transaction
-  calculateHash() {
-    return SHA256(
-      this.fromAddress + this.toAddress + this.amount + this.fee
-    ).toString();
-  }
-
-  // sign the transaction
-  signTransaction(signingKey) {
-    if (signingKey.getPublic("hex") !== this.fromAddress) {
-      throw new Error("You cannot sign transactions for other wallets!");
-    }
-    const hashTx = this.calculateHash(); // hash the transaction
-    const sig = signingKey.sign(hashTx, "base64"); // sign the hash
-    this.signature = sig.toDER("hex"); // convert the signature to hex
-  }
-
-  // check if the transaction is valid
-  isValid() {
-    if (this.fromAddress === "0x0") return true; // if the transaction is a mining reward
-    if (!this.signature || this.signature.length === 0) {
-      throw new Error("No signature in this transaction"); // return false
-    }
-    const publicKey = ec.keyFromPublic(this.fromAddress, "hex"); // get the public key
-    return publicKey.verify(this.calculateHash(), this.signature); // verify the signature
-  }
-}
-
+// ************************************************************
+/*********************   BLOCK   *****************************/
+// ************************************************************
 class Block {
-  /**
-   * @param {string} timestamp - timestamp of the block creation
-   * @param {currently set to number but should be object} transactions - any data that you want to store in your block
-   * @param {string} previousHash - hash of the previous block
-   **/
   constructor(timestamp, transactions, previousHash = "", smartContractState) {
     this.timestamp = timestamp;
     this.transactions = transactions;
@@ -111,7 +15,6 @@ class Block {
     this.nonce = 0;
   }
 
-  // calculate the hash of the block
   calculateHash() {
     return SHA256(
       this.timestamp +
@@ -119,10 +22,9 @@ class Block {
         this.previousHash +
         JSON.stringify(this.smartContractState) +
         this.nonce
-    ).toString(); // note: JSON.stringify is used to convert the data object to a string
+    ).toString();
   }
 
-  // mine the block
   mineBlock(difficulty) {
     while (this.hash.substring(0, difficulty) !== "0".repeat(difficulty)) {
       this.hash = this.calculateHash();
@@ -130,7 +32,6 @@ class Block {
     }
   }
 
-  // check if all the transactions in the block are valid
   hasValidTransactions() {
     for (const transaction of this.transactions) {
       if (!transaction.isValid()) {
@@ -141,6 +42,9 @@ class Block {
   }
 }
 
+// ************************************************************
+/********************* BLOCKCHAIN *****************************/
+// ************************************************************
 class Blockchain {
   constructor() {
     this.name = "Maltcoin";
@@ -168,7 +72,7 @@ class Blockchain {
   }
 
   /**
-   *
+   * Mint new coins to a wallet address
    * @param {string} address - the address of the wallet to mint the coins to
    * @param {number} amount - the amount of coins to mint
    * @param {string} timestamp - the timestamp of the minting
@@ -180,7 +84,7 @@ class Blockchain {
   }
 
   /**
-   *
+   * Burn coins from a wallet address
    * @param {string} address - the address of the wallet to burn the coins from
    * @param {number} amount - the amount of coins to burn
    * @param {string} timestamp - the timestamp of the burning
@@ -217,7 +121,7 @@ class Blockchain {
   }
 
   /**
-   *
+   * Mine the pending transactions and add a new block to the blockchain
    * @param {string} miningRewardAddress - the address of the wallet to receive the mining reward
    * @param {string} timestamp - the timestamp of the mining
    */
@@ -250,7 +154,7 @@ class Blockchain {
   }
 
   /**
-   *
+   * Add a new transaction to the list of pending transactions
    * @param {object} transaction - the transaction to be added to the blockchain
    */
   addTransaction(transaction) {
@@ -263,6 +167,11 @@ class Blockchain {
     this.pendingTransactions.push(transaction);
   }
 
+  /**
+   * Check the balance of a wallet address
+   * @param {string} address - the address of the wallet to check the balance of
+   * @returns {number} - the balance of the wallet
+   */
   balanceOf(address) {
     let balance = 0;
     // Iterate over each block in the blockchain
@@ -307,6 +216,11 @@ class Blockchain {
     return true;
   }
 
+  /**
+   * Deploy a smart contract on the blockchain
+   * @param {object} contract - the smart contract to be deployed
+   * @returns {boolean} - true if the contract was deployed successfully, false otherwise
+   */
   deploySmartContract(contract) {
     if (contract) {
       this.smartContracts.push(contract);
@@ -316,4 +230,104 @@ class Blockchain {
   }
 }
 
-export { Blockchain, Transaction, CBOracle, SmartContract };
+// ************************************************************
+/****************** NFT SMART CONTRACT *************************/
+// ************************************************************
+class NFTContract {
+  constructor(owner) {
+    this.owner = owner;
+    this.NFTs = ["DN"];
+    this.nftOwners = {};
+  }
+
+  // TODO: Transfer ownership of an NFT to another address
+  transferNFT(tokenId, toAddress) {
+    // Check if tokenId exists
+    if (!this.NFTs.includes(tokenId)) {
+      throw new Error("Token ID does not exist");
+    }
+    // Check if the sender owns the NFT
+    if (this.nftOwners[tokenId] !== msg.sender) {
+      throw new Error("Sender does not own the NFT");
+    }
+    // Transfer ownership to toAddress
+    this.nftOwners[tokenId] = toAddress;
+  }
+}
+
+// ************************************************************
+/********************* TRANSACTION ****************************/
+// ************************************************************
+class Transaction {
+  /**
+   *
+   * @param {string} fromAddress - the wallet address of the sender
+   * @param {string} toAddress - the wallet address of the receiver
+   * @param {number} amount - the amount to be sent
+   * @param {number} fee - the fee to be paid
+   * @param {string} timestamp - the timestamp of the transaction
+   */
+  constructor(fromAddress, toAddress, amount, fee, timestamp) {
+    this.fromAddress = fromAddress;
+    this.toAddress = toAddress;
+    this.fee = fee;
+    this.amount = amount;
+    this.timestamp = timestamp;
+  }
+
+  calculateHash() {
+    return SHA256(
+      this.fromAddress + this.toAddress + this.amount + this.fee
+    ).toString();
+  }
+
+  signTransaction(privateKey) {
+    const signingKey = ec.keyFromPrivate(privateKey, "hex");
+    if (signingKey.getPublic("hex") !== this.fromAddress) {
+      throw new Error("You cannot sign transactions for other wallets!");
+    }
+    const hashTx = this.calculateHash(); // hash the transaction
+    const sig = signingKey.sign(hashTx, "base64"); // sign the hash
+    this.signature = sig.toDER("hex"); // convert the signature to hex
+  }
+
+  // check if the transaction is valid
+  isValid() {
+    if (this.fromAddress === "0x0") return true; // if the transaction is a mining reward
+    if (!this.signature || this.signature.length === 0) {
+      throw new Error("No signature in this transaction"); // return false
+    }
+    const publicKey = ec.keyFromPublic(this.fromAddress, "hex"); // get the public key
+    return publicKey.verify(this.calculateHash(), this.signature); // verify the signature
+  }
+}
+
+/********** ORACLE *****************/
+class CBOracle {
+  constructor() {
+    // this.url = `https://api.currencybeacon.com/v1/latest?api_key=${process.env.NEXT_PUBLIC_CURRENCY_BEACON_API_KEY}`;
+  }
+
+  // async getUSDPrice() {
+  //   try {
+  //     const response = await fetch(this.url);
+  //     const data = await response.json();
+  //     return data;
+  //   } catch (error) {
+  //     console.error("Error fetching data from Oracle", error);
+  //   }
+  // }
+}
+
+//TODO: updateSmartContract with the latest USD price from the Oracle
+// async function updateSmartContract(oracle) {
+//   const usdPrice = await oracle.getUSDPrice();
+//   if (usdPrice !== null) {
+//     // update the smart contract
+//   } else {
+//     console.log("Error fetching data from Oracle");
+//   }
+// }
+// setInterval(updateSmartContract, 3600000); // update every hour
+
+export { Blockchain, Transaction, CBOracle, NFTContract };
