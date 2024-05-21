@@ -1,7 +1,6 @@
 "use client";
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect } from "react";
 import {
-  blockchainInstance,
   getBlockchainInstance,
   cbOracle,
 } from "@/bc-instance/data";
@@ -40,7 +39,6 @@ export default function Home() {
 
   return (
     <NonSSRWrapper>
-
         {isLoading ? ( // Render loading state
           <div>Loading...</div>
         ) : (

@@ -1,7 +1,6 @@
 "use client";
 
 import TableWrapper from "@/components/transactions/table-wrapper";
-import { NonSSRWrapper } from "@/components/NonSSRWrapper";
 import { getBlockchainInstance } from "@/bc-instance/data";
 import { useRouter } from "next/navigation";
 import { useLoginStore } from "@/store";
