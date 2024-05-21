@@ -8,8 +8,6 @@ import {
 
 import CardWrapper from "@/components/card-wrapper";
 import TableWrapper from "@/components/table-wrapper";
-import Header from "@/components/header";
-import Footer from "@/components/footer";
 import NonSSRWrapper from "@/components/NonSSRWrapper";
 
 export default function Home() {
@@ -42,7 +40,7 @@ export default function Home() {
 
   return (
     <NonSSRWrapper>
-      <Header />
+
         {isLoading ? ( // Render loading state
           <div>Loading...</div>
         ) : (
@@ -99,7 +97,7 @@ export default function Home() {
             </div>
           </>
         )}
-      <Footer />
+
     </NonSSRWrapper>
   );
 }

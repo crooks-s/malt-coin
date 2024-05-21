@@ -17,28 +17,27 @@ const CreateTransaction = () => {
   const [fromAddress, setFromAddress] = useState("");
   const [toAddress, setToAddress] = useState("");
 
-  const fetchWalletData = async () => {
-    if (user) {
-      try {
-        const userDocRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          setFromAddress(userData.publicKey);
-          const instance = await getBlockchainInstance();
-          const balance = instance.balanceOf(userData.publicKey);
-          setBalance(balance);
-        } else {
-          console.log("No such document!");
-        }
-      } catch (error) {
-        console.error("Error fetching wallet data: ", error);
-      }
-    }
-  };
-
   useEffect(() => {
     if (user) {
+      const fetchWalletData = async () => {
+        if (user) {
+          try {
+            const userDocRef = doc(db, "users", user.uid);
+            const userDoc = await getDoc(userDocRef);
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              setFromAddress(userData.publicKey);
+              const instance = await getBlockchainInstance();
+              const balance = instance.balanceOf(userData.publicKey);
+              setBalance(balance);
+            } else {
+              console.log("No such document!");
+            }
+          } catch (error) {
+            console.error("Error fetching wallet data: ", error);
+          }
+        }
+      };
       fetchWalletData();
     }
   }, [user]);

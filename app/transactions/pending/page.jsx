@@ -5,7 +5,7 @@ import { NonSSRWrapper } from "@/components/NonSSRWrapper";
 import { getBlockchainInstance } from "@/bc-instance/data";
 import { useRouter } from "next/navigation";
 import { useLoginStore } from "@/store";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase/firebaseConfig";
 
@@ -17,7 +17,7 @@ const PendingTransactionsPage = () => {
   const [publicKey, setPublicKey] = useState("");
   const [blockchainInstance, setBlockchainInstance] = useState(null);
 
-  const fetchWalletData = async () => {
+  const fetchWalletData = useCallback(async () => {
     if (user) {
       try {
         const userDocRef = doc(db, "users", user.uid);
@@ -32,16 +32,21 @@ const PendingTransactionsPage = () => {
         console.error("Error fetching wallet data: ", error);
       }
     }
-  };
+  }, [user]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const instance = await getBlockchainInstance();
-      setBlockchainInstance(instance);
-      setPendingTransactions(instance.pendingTransactions);
+    const fetchBlockchainData = async () => {
+      try {
+        const instance = await getBlockchainInstance();
+        setBlockchainInstance(instance);
+        setPendingTransactions(instance.pendingTransactions);
+      } catch (error) {
+        console.error("Error fetching blockchain instance:", error);
+      }
     };
-    fetchData();
-  });
+
+    fetchBlockchainData();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
