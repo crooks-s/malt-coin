@@ -58,11 +58,6 @@ class Blockchain {
     return new Block(ms, [], "0");
   }
 
-  /**
-   * Mine the pending transactions and add a new block to the blockchain
-   * @param {string} miningRewardAddress - the address of the wallet to receive the mining reward
-   * @param {string} timestamp - the timestamp of the mining
-   */
   minePendingTransactions(
     miningRewardAddress,
     timestamp = new Date().getTime()
@@ -74,7 +69,6 @@ class Blockchain {
     );
     block.mineBlock(this.difficulty);
     this.chain.push(block);
-
     // pend the mining transaction including fees allocated to the miner
     let totalFees = 0;
     for (const transaction of this.pendingTransactions) {
@@ -91,10 +85,7 @@ class Blockchain {
     ];
   }
 
-  /**
-   * Add a new transaction to the list of pending transactions
-   * @param {object} transaction - the transaction to be added to the blockchain
-   */
+  // Add a new transaction to the list of pending transactions
   addTransaction(transaction) {
     if (!transaction.fromAddress || !transaction.toAddress) {
       throw new Error("Transaction must include from and to address");
@@ -105,11 +96,6 @@ class Blockchain {
     this.pendingTransactions.push(transaction);
   }
 
-  /**
-   * Check the balance of a wallet address
-   * @param {string} address - the address of the wallet to check the balance of
-   * @returns {number} - the balance of the wallet
-   */
   balanceOf(address) {
     let balance = 0;
     // Iterate over each block in the blockchain
@@ -151,11 +137,6 @@ class Blockchain {
     return true;
   }
 
-  /**
-   * Deploy a smart contract on the blockchain
-   * @param {object} contract - the smart contract to be deployed
-   * @returns {boolean} - true if the contract was deployed successfully, false otherwise
-   */
   deploySmartContract(contract) {
     if (contract) {
       this.smartContracts.push(contract);
@@ -195,9 +176,13 @@ class MaltContract {
    * @param {string} timestamp - the timestamp of the minting
    */
   mint(address, amount, timestamp = new Date().getTime()) {
+    if (!this.balances[address]) {
+      this.balances[address] = 0;
+    }
     const tx = new Transaction("0x0", address, amount, 0, timestamp);
     this.blockchain.addTransaction(tx);
     this.totalSupply += amount;
+    this.balances[address] += amount;
   }
 
   /**
@@ -295,14 +280,6 @@ class NFTContract {
 
 // Transaction //
 class Transaction {
-  /**
-   *
-   * @param {string} fromAddress - the wallet address of the sender
-   * @param {string} toAddress - the wallet address of the receiver
-   * @param {number} amount - the amount to be sent
-   * @param {number} fee - the fee to be paid
-   * @param {string} timestamp - the timestamp of the transaction
-   */
   constructor(fromAddress, toAddress, amount, fee, timestamp) {
     this.fromAddress = fromAddress;
     this.toAddress = toAddress;
