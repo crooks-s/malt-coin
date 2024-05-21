@@ -1,73 +1,121 @@
 "use client";
 
-import { blockchainInstance, walletKeys, users } from "@/bc-instance/data";
+import { blockchainInstance, getBlockchainInstance } from "@/bc-instance/data";
 import { Transaction } from "@/bc-instance/blockchain";
 import { useLoginStore } from "@/store";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import RadioBtn from "@/components/transactions/radio-btns";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/firebase/firebaseConfig";
 
 const CreateTransaction = () => {
   const user = useLoginStore((state) => state.user);
   const router = useRouter();
-  const [otherUsers, setOtherUsers] = useState([]);
   const [balance, setBalance] = useState(0);
-  const [selectedRecipient, setSelectedRecipient] = useState("");
-  const [senderAddress, setSenderAddress] = useState("");
   const [amount, setAmount] = useState(0);
+  const [fromAddress, setFromAddress] = useState("");
+  const [toAddress, setToAddress] = useState("");
 
-  const handleRecipientChange = (e) => {
-    setSelectedRecipient(e.target.value);
+  const fetchWalletData = async () => {
+    if (user) {
+      try {
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setFromAddress(userData.publicKey);
+          const instance = await getBlockchainInstance();
+          const balance = instance.balanceOf(userData.publicKey);
+          setBalance(balance);
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error fetching wallet data: ", error);
+      }
+    }
   };
 
   useEffect(() => {
     if (user) {
-      setSenderAddress(user.publicKey); // get sender address
-      setOtherUsers(users.filter((u) => u.username !== user.username)); // get other users
-      setBalance(blockchainInstance.balanceOf(user.publicKey)); // get balance
+      fetchWalletData();
     }
   }, [user]);
+
+  const fetchPrivateKey = async () => {
+    try {
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        return userData.privateKey;
+      } else {
+        console.log("No such document!");
+      }
+    } catch (error) {
+      console.error("Error fetching private key: ", error);
+    }
+  };
+
+  const handleRecipientChange = (e) => {
+    setToAddress(e.target.value);
+  };
+
+  const handleAmountChange = (e) => {
+    const value = e.target.value;
+    // Convert the value to a number, and only set it if it's a valid number
+    const numberValue = value === "" ? 0 : Number(value);
+    if (!isNaN(numberValue)) {
+      setAmount(numberValue);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!senderAddress || !selectedRecipient || !amount) {
-      e.preventDefault();
+    if (!fromAddress || !toAddress || !amount) {
       alert("Please fill in all fields");
       return;
     } else if (amount > balance) {
-      e.preventDefault();
       alert("Insufficient balance");
       return;
     } else if (amount <= 0) {
-      e.preventDefault();
       alert("Please enter a valid amount");
       return;
     }
 
     const tx = new Transaction(
-      senderAddress,
-      selectedRecipient,
+      fromAddress,
+      toAddress,
       amount,
       10,
       new Date().toLocaleString()
     );
-    tx.signTransaction(user.keyObj);
-    blockchainInstance.addTransaction(tx);
+
+    fetchPrivateKey()
+      .then((privateKey) => {
+        tx.signTransaction(privateKey);
+        blockchainInstance.addTransaction(tx);
+      })
+      .catch((error) => {
+        throw new Error(error);
+      });
+
     alert("Transaction created");
     router.push("/transactions/pending");
   };
 
   return (
     <div className="h-screen">
-      {useLoginStore((state) => state.isLoggedIn) && otherUsers.length > 0 ? (
+      {useLoginStore((state) => state.isLoggedIn) ? (
         <>
           <h1 className="text-2xl font-bold mt-8 ml-10">
             Create a New Transaction
           </h1>
           <h2 className="text-lg ml-10 pt-10 font-semibold">
             Current account balance:
-            <span className="text-xl"> {balance}</span>
+            <span className="text-xl"> {}</span>
           </h2>
           <form
             onSubmit={handleSubmit}
@@ -79,7 +127,7 @@ const CreateTransaction = () => {
                 className="border border-gray-300 rounded-md p-2 block w-full overflow-auto break-words"
                 disabled={true}
                 type="text"
-                defaultValue={user.publicKey}
+                defaultValue={fromAddress}
               />
             </div>
             <div className="px-10 w-full">
@@ -87,21 +135,10 @@ const CreateTransaction = () => {
               <input
                 className="border border-gray-300 rounded-md p-2 block w-full overflow-auto break-words"
                 type="text"
-                value={selectedRecipient}
+                value={toAddress}
                 onChange={handleRecipientChange}
                 placeholder="Recipient Address"
               />
-              <>
-                {otherUsers.map((user) => (
-                  <RadioBtn
-                    key={user.publicKey}
-                    label={user.username}
-                    value={user.publicKey}
-                    checked={selectedRecipient === user.publicKey}
-                    onChange={handleRecipientChange}
-                  />
-                ))}
-              </>
             </div>
             <div className="px-10 pt-10 w-full">
               <span className="pr-5 font-semibold">Amount</span>
@@ -109,7 +146,7 @@ const CreateTransaction = () => {
                 className="border border-gray-300 rounded-md p-2"
                 type="number"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={handleAmountChange}
                 min="0"
                 max={balance}
                 placeholder="Amount"

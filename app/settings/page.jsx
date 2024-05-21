@@ -1,7 +1,8 @@
 "use client";
 
-import { blockchainInstance } from "@/bc-instance/data";
+import { blockchainInstance, getBlockchainInstance } from "@/bc-instance/data";
 import { useLoginStore } from "@/store";
+import { useEffect } from "react";
 
 const SettingsPage = () => {
   const isLoggedIn = useLoginStore((state) => state.isLoggedIn);
@@ -13,6 +14,15 @@ const SettingsPage = () => {
     blockchainInstance.miningReward = e.target[1].value;
     alert("Settings updated");
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const instance = await getBlockchainInstance();
+      blockchainInstance.difficulty = instance.difficulty;
+      blockchainInstance.miningReward = instance.miningReward;
+    };
+    fetchData();
+  });
 
   return (
     <div className="h-screen">

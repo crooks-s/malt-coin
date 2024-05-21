@@ -7,14 +7,12 @@ import { Button } from "@/components/ui/button";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/firebase/firebaseConfig";
 import { collection, setDoc, doc } from "firebase/firestore";
-const EC = require("elliptic").ec;
-const ec = new EC("secp256k1"); // secp256k1 is the algorithm used in bitcoin
 
 const SignUp = () => {
   const setUser = useLoginStore((state) => state.setUser);
   const isLoggedIn = useLoginStore((state) => state.isLoggedIn);
   const setIsLoggedIn = useLoginStore((state) => state.setIsLoggedIn);
-  const usersRef = collection(db, "users"); // Reference to the 'users' collection in Firestore
+  const usersRef = collection(db, "users");
   const router = useRouter();
 
   useEffect(() => {
@@ -23,7 +21,6 @@ const SignUp = () => {
     }
   });
 
-  // User state to store form data
   const [userForm, setUserForm] = useState({
     email: "",
     password: "",
@@ -39,10 +36,7 @@ const SignUp = () => {
 
   const addUserToFirestore = async (uid) => {
     try {
-      // Reference to the document with the specified UID under the 'users' collection
       const userDocRef = doc(usersRef, uid);
-  
-      // Set document data
       await setDoc(userDocRef, {
         email: userForm.email,
       });

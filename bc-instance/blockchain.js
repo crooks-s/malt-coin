@@ -2,9 +2,7 @@ const SHA256 = require("crypto-js/sha256");
 const EC = require("elliptic").ec;
 const ec = new EC("secp256k1");
 
-// ************************************************************
-/*********************   BLOCK   *****************************/
-// ************************************************************
+// Block //
 class Block {
   constructor(timestamp, transactions, previousHash = "", smartContractState) {
     this.timestamp = timestamp;
@@ -42,82 +40,22 @@ class Block {
   }
 }
 
-// ************************************************************
-/********************* BLOCKCHAIN *****************************/
-// ************************************************************
+// Blockchain //
 class Blockchain {
   constructor() {
-    this.name = "Maltcoin";
-    this.symbol = "MALT";
-    this.version = "1.0";
-    this.decimals = 0;
     this.chain = [this.createGenesisBlock()];
     this.difficulty = 0;
     this.pendingTransactions = [];
     this.miningReward = 5;
-    this.totalSupply = 0;
     this.smartContracts = [];
   }
 
-  name = () => this.name;
-  symbol = () => this.symbol;
-  decimals = () => this.decimals;
-  totalSupply = () => this.totalSupply;
   getLatestBlock = () => this.chain[this.chain.length - 1];
 
   createGenesisBlock() {
     const date = new Date(2024, 0, 1);
     const ms = date.getTime();
     return new Block(ms, [], "0");
-  }
-
-  /**
-   * Mint new coins to a wallet address
-   * @param {string} address - the address of the wallet to mint the coins to
-   * @param {number} amount - the amount of coins to mint
-   * @param {string} timestamp - the timestamp of the minting
-   */
-  mint(address, amount, timestamp = new Date().getTime()) {
-    const tx = new Transaction("0x0", address, amount, 0, timestamp);
-    this.pendingTransactions.push(tx);
-    this.totalSupply += amount;
-  }
-
-  /**
-   * Burn coins from a wallet address
-   * @param {string} address - the address of the wallet to burn the coins from
-   * @param {number} amount - the amount of coins to burn
-   * @param {string} timestamp - the timestamp of the burning
-   */
-  burn(address, amount, timestamp = new Date().getTime()) {
-    if (this.balanceOf(address) < amount) {
-      throw new Error("Insufficient balance");
-    }
-    const tx = new Transaction(address, "0x0", amount, 0, timestamp);
-    this.pendingTransactions.push(tx);
-    this.totalSupply -= amount;
-  }
-
-  /**
-   * Approve a spender to spend tokens on behalf of the token holder
-   * @param {string} spenderAddress - The address of the spender
-   * @param {number} amount - The amount of tokens to approve
-   * @param {string} ownerAddress - The address of the token holder
-   */
-  approve(spenderAddress, amount, ownerAddress) {
-    // Perform checks
-    if (!ownerAddress || !spenderAddress || isNaN(amount) || amount <= 0) {
-      throw new Error("Invalid parameters for approval");
-    }
-
-    // TODO: Find the token holder's account and update allowance
-    // const accountIndex = this.accounts.findIndex(
-    //   (account) => account.address === ownerAddress
-    // );
-    // if (accountIndex === -1) {
-    //   throw new Error("Token holder account not found");
-    // }
-    // this.accounts[accountIndex].allowance[spenderAddress] = amount;
   }
 
   /**
@@ -227,9 +165,112 @@ class Blockchain {
   }
 }
 
-// ************************************************************
-/****************** NFT SMART CONTRACT *************************/
-// ************************************************************
+// Maltcoin Smart Contract //
+class MaltContract {
+  constructor(blockchain) {
+    this.blockchain = blockchain;
+    this.totalSupply = 100000;
+    this.balances = {};
+    this.allowance = {};
+    this.name = "Maltcoin";
+    this.symbol = "MALT";
+    this.version = "1.0";
+    this.decimals = 0;
+  }
+
+  name = () => this.name;
+  symbol = () => this.symbol;
+  decimals = () => this.decimals;
+  totalSupply = () => this.totalSupply;
+
+  initialize(owner) {
+    this.owner = owner;
+    this.balances[owner] = this.totalSupply;
+  }
+
+  /**
+   * Mint new coins to a wallet address
+   * @param {string} address - the address of the wallet to mint the coins to
+   * @param {number} amount - the amount of coins to mint
+   * @param {string} timestamp - the timestamp of the minting
+   */
+  mint(address, amount, timestamp = new Date().getTime()) {
+    const tx = new Transaction("0x0", address, amount, 0, timestamp);
+    this.blockchain.addTransaction(tx);
+    this.totalSupply += amount;
+  }
+
+  /**
+   * Burn coins from a wallet address
+   * @param {string} address - the address of the wallet to burn the coins from
+   * @param {number} amount - the amount of coins to burn
+   * @param {string} timestamp - the timestamp of the burning
+   */
+  burn(address, amount, timestamp = new Date().getTime()) {
+    if (this.balanceOf(address) < amount) {
+      throw new Error("Insufficient balance");
+    }
+    const tx = new Transaction(address, "0x0", amount, 0, timestamp);
+    this.blockchain.addTransaction(tx);
+    this.totalSupply -= amount;
+  }
+
+  balanceOf(address) {
+    if (!this.balances[address]) {
+      throw new Error("Address not found");
+    }
+    return this.balances[address] || 0;
+  }
+
+  transfer(fromAddress, toAddress, amount, fee, privateKey) {
+    if (this.balanceOf(fromAddress) < amount) {
+      throw new Error("Insufficient balance");
+    }
+    const tx = new Transaction(
+      fromAddress,
+      toAddress,
+      amount,
+      fee,
+      new Date().getTime()
+    );
+    tx.signTransaction(privateKey);
+
+    if (!tx.isValid()) {
+      throw new Error("Invalid transaction");
+    }
+
+    if (!this.balances[fromAddress]) {
+      throw new Error("Address not found");
+    }
+
+    this.blockchain.addTransaction(tx);
+    this.balances[fromAddress] -= amount + fee;
+  }
+
+  /**
+   * Approve a spender to spend tokens on behalf of the token holder
+   * @param {string} spenderAddress - The address of the spender
+   * @param {number} amount - The amount of tokens to approve
+   * @param {string} ownerAddress - The address of the token holder
+   */
+  approve(spenderAddress, amount, ownerAddress) {
+    // Perform checks
+    if (!ownerAddress || !spenderAddress || isNaN(amount) || amount <= 0) {
+      throw new Error("Invalid parameters for approval");
+    }
+
+    // TODO: Find the token holder's account and update allowance
+    // const accountIndex = this.accounts.findIndex(
+    //   (account) => account.address === ownerAddress
+    // );
+    // if (accountIndex === -1) {
+    //   throw new Error("Token holder account not found");
+    // }
+    // this.accounts[accountIndex].allowance[spenderAddress] = amount;
+  }
+}
+
+// NFT Smart Contract //
 class NFTContract {
   constructor(owner) {
     this.owner = owner;
@@ -252,9 +293,7 @@ class NFTContract {
   }
 }
 
-// ************************************************************
-/********************* TRANSACTION ****************************/
-// ************************************************************
+// Transaction //
 class Transaction {
   /**
    *
@@ -298,7 +337,7 @@ class Transaction {
   }
 }
 
-/********** ORACLE *****************/
+// Oracle //
 class CBOracle {
   constructor() {
     // this.url = `https://api.currencybeacon.com/v1/latest?api_key=${process.env.NEXT_PUBLIC_CURRENCY_BEACON_API_KEY}`;
@@ -326,4 +365,4 @@ class CBOracle {
 // }
 // setInterval(updateSmartContract, 3600000); // update every hour
 
-export { Blockchain, Transaction, CBOracle, NFTContract };
+export { Blockchain, Transaction, CBOracle, NFTContract, MaltContract };

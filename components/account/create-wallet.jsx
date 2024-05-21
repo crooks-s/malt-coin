@@ -33,7 +33,6 @@ export function CreateWallet() {
     try {
       const userDocRef = doc(db, "users", auth.currentUser.uid);
       await updateDoc(userDocRef, {
-        // ecKey: key,
         publicKey: publicKey,
         privateKey: privateKey,
       });

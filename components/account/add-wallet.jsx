@@ -27,7 +27,6 @@ export function AddWallet() {
       await updateDoc(userDocRef, {
         publicKey: walletAddress,
       });
-      // Close the dialog after successful submission
       setIsOpen(false);
     } catch (error) {
       console.error("Error updating document: ", error);

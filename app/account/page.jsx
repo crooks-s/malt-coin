@@ -33,7 +33,6 @@ const AccountPage = () => {
         }
       }
     };
-
     fetchWalletData();
   }, [user]);
 
