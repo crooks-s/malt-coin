@@ -1,15 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useLoginStore } from "@/store";
-import { doc, getDoc } from "firebase/firestore"; 
-import { db } from "@/firebase/firebaseConfig"; 
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/firebase/firebaseConfig";
 import { CreateWallet } from "@/components/account/create-wallet";
 import { AddWallet } from "@/components/account/add-wallet";
-import { blockchainInstance } from "@/bc-instance/data"; 
+import { getBlockchainInstance } from "@/bc-instance/data";
 
 const AccountPage = () => {
   const user = useLoginStore((state) => state.user);
-  const [balance, setBalance] = useState(0);
+  const [balance, setBalance] = useState("");
   const [publicKey, setPublicKey] = useState("");
   const [privateKey, setPrivateKey] = useState("");
 
@@ -23,18 +23,19 @@ const AccountPage = () => {
             const userData = userDoc.data();
             setPublicKey(userData.publicKey || "No wallet address found");
             setPrivateKey(userData.privateKey || "No private key found");
-            const balance = blockchainInstance.balanceOf(userData.publicKey);
-            setBalance(balance);
           } else {
             console.log("No such document!");
           }
+          const blockchainInstance = await getBlockchainInstance();
+          const walletBalance = await blockchainInstance.smartContracts[0].balances[publicKey];
+          setBalance(walletBalance);
         } catch (error) {
           console.error("Error fetching wallet data: ", error);
         }
       }
     };
     fetchWalletData();
-  }, [user]);
+  }, [user, publicKey]);
 
   return (
     <div className="h-screen">
