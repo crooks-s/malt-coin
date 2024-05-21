@@ -15,27 +15,35 @@ const AccountPage = () => {
 
   useEffect(() => {
     const fetchWalletData = async () => {
-      if (user) {
-        try {
-          const userDocRef = doc(db, "users", user.uid);
-          const userDoc = await getDoc(userDocRef);
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            setPublicKey(userData.publicKey || "No wallet address found");
-            setPrivateKey(userData.privateKey || "No private key found");
-          } else {
-            console.log("No such document!");
-          }
-          const blockchainInstance = await getBlockchainInstance();
-          const walletBalance = await blockchainInstance.smartContracts[0].balances[publicKey];
-          setBalance(walletBalance);
-        } catch (error) {
-          console.error("Error fetching wallet data: ", error);
+      if (!user) return; // Exit early if user is not available
+
+      try {
+        const userDocRef = doc(db, "users", user.uid);
+        const userDocSnapshot = await getDoc(userDocRef);
+
+        if (!userDocSnapshot.exists()) {
+          console.log("No such document!");
+          return;
         }
+
+        const userData = userDocSnapshot.data();
+        const userPublicKey = userData.publicKey || "No wallet address found";
+        const userPrivateKey = userData.privateKey || "No private key found";
+
+        setPublicKey(userPublicKey);
+        setPrivateKey(userPrivateKey);
+
+        const blockchainInstance = await getBlockchainInstance();
+        const walletBalance = await blockchainInstance.smartContracts[0]
+          .balances[userPublicKey];
+        setBalance(walletBalance);
+      } catch (error) {
+        console.error("Error fetching wallet data: ", error);
       }
     };
+
     fetchWalletData();
-  }, [user, publicKey]);
+  }, [user]);
 
   return (
     <div className="h-screen">
